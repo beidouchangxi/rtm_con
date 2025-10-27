@@ -1,0 +1,96 @@
+from common_items import *
+from payload_login import login_2016, login_2025
+
+"""
+GB/T 32960.3-2016 chp6.2 table2
+GB/T 32960.3-2025 chp6.2 table2
+"""
+rtm_ver = Enum(Int16ub,
+    protocol_2016=0x2323,
+    protocol_2025=0x2424,
+    )
+
+rtm_msg = Struct(
+    "starter"   / rtm_ver,
+    "msg_type"  / LazyBound(lambda: msg_types),
+    "ack"       / LazyBound(lambda: ack_flags),
+    "vin"       / PaddedString(17, "ascii"),
+    "enc"       / Enum(Int8ub,
+        uncrypted=0x01,
+        rsa=0x02,
+        aes=0x03,
+        # start of newly defined in 2025 protocol
+        sm2=0x04, 
+        sm4=0x05,
+        # end of newly defined in 2025 protocol
+        abnormal=0xfe,
+        invalid=0xff),
+    "payload"   / Prefixed(
+        Int16ub,
+        LazyBound(lambda: payload_mapping),
+    ),
+    "checksum"  / Int8ub,
+)
+
+"""
+GB/T 32960.3-2016 chp6.3.1 table3
+GB/T 32960.3-2025 chp6.3.1 table3
+"""
+msg_types = Enum(Int8ub, 
+    login=1,
+    realtime=2,
+    supplimentary=3,
+    logout=4,
+    plt_login=5,
+    plt_logout=6,
+    # GB/T 32960.3-2016 chp6.3.1 table3
+        # 0x07~0x08 client reserve
+        # 0x09~0x7f uplink reserve
+        # 0x80~0x82 client reserve
+        # 0x83~0xbf downlink reserve
+        # 0xc0~0xfe platform reserve
+    # GB/T 32960.3-2025 chp6.3.1 table3
+        # 0x07~0x0A client reserve
+        # 0x0b payload encryption key exchange
+        # 0x0c~0x7f uplink reserve
+        # 0x80~0x82 client reserve
+        # 0x83~0xbf downlink reserve
+        # 0xc0~0xfe platform reserve
+)
+
+payload_mapping = Switch(
+    lambda this: (this.starter, this.msg_type),
+    {
+        (rtm_ver.protocol_2016, msg_types.login): login_2016,
+
+        (rtm_ver.protocol_2025, msg_types.login): login_2025,
+    },
+    default=GreedyBytes,
+)
+
+"""
+GB/T 32960.3-2016 chp6.3.2 table4
+GB/T 32960.3-2025 chp6.3.2 table4
+"""
+ack_flags = Enum(Int8ub,
+    ok=0x01,
+    nok=0x02,
+    vin_duplicate=0x03,
+    vin_unkown=0x04,
+    # start of newly defined in 2025 protocol
+    signature_invalid=0x05,
+    structure_invalid=0x06,
+    decryption_failed=0x07,
+    # end of newly defined in 2025 protocol
+    command=0xfe,
+)
+
+if __name__=='__main__':
+    test_msgs = (
+        # Login test
+        '242401fe484155563442474e365335303032323139010036190a1b140202000c3839383630393234373930303233313636363036010130524a504541303048415530414146313331303031393535d5',
+        '242401fe484155563442474e365335303032323139010067190a1b140202000c383938363039323437393030323331363636303602010230524a50454130304841553041414631333130303139353530524a50454130304841553041414631333130303139353630524a504541303048415530414146313331303031393537d5',
+        '232301fe484155563442474e365335303032323139010066190a1b140202000c3839383630393234373930303233313636363036031830524a50454130304841553041414631333130303139353530524a50454130304841553041414631333130303139353630524a504541303048415530414146313331303031393537d5',
+    )
+    for msg in test_msgs:
+        print(rtm_msg.parse(bytes.fromhex(msg)))
