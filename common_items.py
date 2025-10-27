@@ -1,6 +1,9 @@
 from construct import (
-    Switch, Lazy, LazyBound, Error, this, GreedyBytes, Probe,
-    Struct, Const, Enum, Prefixed, Array,
+    Lazy, LazyBound, Peek, 
+    Error, Probe, this,
+    Switch, RepeatUntil, GreedyRange,
+    Bytes, GreedyBytes, 
+    Struct, Const, Enum, Prefixed, Array, 
     PaddedString,
     Int8ub, Int16ub, Int32ub,
 )

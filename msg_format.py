@@ -1,6 +1,6 @@
 from common_items import *
 from payload_login import login_2016, login_2025
-
+from payload_data import data_2016, data_2025
 """
 GB/T 32960.3-2016 chp6.2 table2
 GB/T 32960.3-2025 chp6.2 table2
@@ -61,9 +61,14 @@ msg_types = Enum(Int8ub,
 payload_mapping = Switch(
     lambda this: (this.starter, this.msg_type),
     {
+        # For 2016 protocol
         (rtm_ver.protocol_2016, msg_types.login): login_2016,
-
+        (rtm_ver.protocol_2016, msg_types.realtime): data_2016,
+        (rtm_ver.protocol_2016, msg_types.supplimentary): data_2016,
+        # For 2025 protocol
         (rtm_ver.protocol_2025, msg_types.login): login_2025,
+        (rtm_ver.protocol_2025, msg_types.realtime): data_2025,
+        (rtm_ver.protocol_2025, msg_types.supplimentary): data_2025,
     },
     default=GreedyBytes,
 )
@@ -91,6 +96,9 @@ if __name__=='__main__':
         '242401fe484155563442474e365335303032323139010036190a1b140202000c3839383630393234373930303233313636363036010130524a504541303048415530414146313331303031393535d5',
         '242401fe484155563442474e365335303032323139010067190a1b140202000c383938363039323437393030323331363636303602010230524a50454130304841553041414631333130303139353530524a50454130304841553041414631333130303139353630524a504541303048415530414146313331303031393537d5',
         '232301fe484155563442474e365335303032323139010066190a1b140202000c3839383630393234373930303233313636363036031830524a50454130304841553041414631333130303139353530524a50454130304841553041414631333130303139353630524a504541303048415530414146313331303031393537d5',
+        # While vehicle data test
+        '242402fe484155563442474e365335303032323139010026190a1b14020201ffffffffffffffffffffffffffffffffffffff010003aabbcc0004aabbccddd5',
+        '232302fe484155563442474e36533530303232313901001b190a1b14020201ffffffffffffffffffffffffffffffffffffffffd5',
     )
     for msg in test_msgs:
         print(rtm_msg.parse(bytes.fromhex(msg)))
