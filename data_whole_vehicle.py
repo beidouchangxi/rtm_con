@@ -14,7 +14,7 @@ whole_vehicle_data_2016 = Struct(
     "current_total" / DataItemAdapter(Int16ub, "A", 0.1, -1000),
     "soc" / DataItemAdapter(Int8ub, "%"),
     "dcdc_state" / Enum(Int8ub, on=0x01, off=0x02, abnormal=0xfe, invalid=0xff),
-    "gear_state" / Int8ub,
+    "gear_state" / LazyBound(lambda: gear_state_2016),
     # No abnormal/invalid defined here anyway
     "insulation_resistance" / DataItemAdapter(Int16ub, "kΩ", validation=False),
     "brake_padel" / DataItemAdapter(Int8ub, "%"),
