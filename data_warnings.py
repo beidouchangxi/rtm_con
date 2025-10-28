@@ -72,5 +72,10 @@ warnings_data_2025 = Struct(
     "emotor_failures" / PrefixedArray(Int8ub, Bytes(4)),
     "engine_failures" / PrefixedArray(Int8ub, Bytes(4)),
     "other_failures" / PrefixedArray(Int8ub, Bytes(4)),
-    "general_warning_list" / PrefixedArray(Int8ub, Bytes(2)),
+    "general_warning_list" / PrefixedArray(Int8ub,
+        Struct(
+            "warning" / Enum(Int8ub, **{name: index for index, name in general_warnings_2025.items()}),
+            "level" / Int8ub,
+        ),
+    ),
 )
