@@ -4,7 +4,7 @@ from common_items import *
 GB/T 32960.3-2016 chp7.1 table6
 """
 login_2016 = Struct(
-    "timestamp" / rtm_ts,
+    "timestamp" / RtmTs,
     "session_id" / Int16ub,
     "iccid" / PaddedString(20, "ascii"),
     "bms_total" / Int8ub,
@@ -19,7 +19,7 @@ login_2016 = Struct(
 GB/T 32960.3-2025 chp7.1 table6
 """
 login_2025 = Struct(
-    "timestamp" / rtm_ts,
+    "timestamp" / RtmTs,
     "session_id" / Int16ub,
     "iccid" / PaddedString(20, "ascii"),
     "bms_total" / Int8ub,

@@ -5,7 +5,7 @@ from data_whole_vehicle import whole_vehicle_data_2016, whole_vehicle_data_2025
 GB/T 32960.3-2016 chp7.2.1 table7
 """
 data_2016 = Struct(
-    "timestamp" / rtm_ts,
+    "timestamp" / RtmTs,
     "data_list" / LazyBound(lambda: GreedyRange(data_item_2016)),
 )
 
@@ -13,7 +13,7 @@ data_2016 = Struct(
 GB/T 32960.3-2025 chp7.2.1 table7
 """
 data_2025 = Struct(
-    "timestamp" / rtm_ts,
+    "timestamp" / RtmTs,
     "data_list" / LazyBound(lambda: data_items_2025),
     "sig_starter" / Const(b'\xff'),
     "sig_algo" / LazyBound(lambda: sig_algos),

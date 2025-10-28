@@ -1,3 +1,5 @@
+from datetime import datetime, timezone, timedelta
+
 from construct import (
     Lazy, LazyBound, Peek, Adapter,
     Error, Probe, this,
@@ -12,7 +14,22 @@ from construct import (
 GB/T 32960.3-2016 chp6.4 table5
 GB/T 32960.3-2025 chp6.4 table5
 """
-rtm_ts = Int8ub[6]
+BEIJING_TZ = timezone(timedelta(hours=8))
+
+class RtmTsAdapter(Adapter):
+    def __init__(self):
+        super().__init__(Bytes(6))
+    
+    def _decode(self, msg_ts, context, path):
+        ts_obj_bj = datetime(msg_ts[0]+2000, msg_ts[1],msg_ts[2],msg_ts[3],msg_ts[4],msg_ts[5]).replace(tzinfo=BEIJING_TZ)
+        ts_obj_local = ts_obj_bj.astimezone()
+        return ts_obj_local.replace(tzinfo=None)
+    
+    def _encode(self, ts_obj_local, context, path):
+        ts_obj_bj = ts_obj_local.astimezone(BEIJING_TZ)
+        return bytes((ts_obj_bj.year, ts_obj_bj.month, ts_obj_bj.day, ts_obj_bj.hour, ts_obj_bj.minute, ts_obj_bj.second))
+
+RtmTs = RtmTsAdapter()
 
 """
 Handle Numbers with factor, offset and unit
