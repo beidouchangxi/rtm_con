@@ -4,6 +4,7 @@ from data_emotor import emotor_data_2016, emotor_data_2025
 from data_engine import engine_data_2016, engine_data_2025
 from data_gnss import gnss_data_2016, gnss_data_2025
 from data_pack_extrema import pack_extrema_data_2016
+from data_warnings import warnings_data_2016, warnings_data_2025
 """
 GB/T 32960.3-2016 chp7.2.1 table7
 """
@@ -55,6 +56,7 @@ data_item_2016 = Struct(
             data_types_2016.engine: engine_data_2016,
             data_types_2016.gnss: gnss_data_2016,
             data_types_2016.pack_extrema: pack_extrema_data_2016,
+            data_types_2016.warnings: warnings_data_2016,
         },
         default=GreedyBytes,
     ),
@@ -90,6 +92,7 @@ data_item_2025 = Struct(
             data_types_2025.emotor: emotor_data_2025,
             data_types_2025.engine: engine_data_2025,
             data_types_2025.gnss: gnss_data_2025,
+            data_types_2025.warnings: warnings_data_2025,
         },
         default=GreedyBytes,
     ),

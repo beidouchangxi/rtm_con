@@ -6,7 +6,7 @@ from construct import (
     Switch, RepeatUntil, GreedyRange,
     Bytes, GreedyBytes,
     BitStruct, Flag, BitsInteger, Padding,
-    Struct, Const, Enum, Prefixed, Array, 
+    Struct, Const, Enum, Prefixed, Array, PrefixedArray,
     PaddedString,
     Int8ub, Int16ub, Int32ub,
 )
