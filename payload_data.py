@@ -1,5 +1,6 @@
 from common_items import *
 from data_whole_vehicle import whole_vehicle_data_2016, whole_vehicle_data_2025
+from data_emotor import emotor_data_2016, emotor_data_2025
 
 """
 GB/T 32960.3-2016 chp7.2.1 table7
@@ -48,6 +49,7 @@ data_item_2016 = Struct(
         lambda this: this.data_type,
         {
             data_types_2016.whole_vehicle: whole_vehicle_data_2016,
+            data_types_2016.emotor: emotor_data_2016,
         },
         default=GreedyBytes,
     ),
@@ -80,6 +82,7 @@ data_item_2025 = Struct(
         lambda this: this.data_type,
         {
             data_types_2025.whole_vehicle: whole_vehicle_data_2025,
+            data_types_2025.emotor: emotor_data_2025,
         },
         default=GreedyBytes,
     ),
