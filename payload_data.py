@@ -3,7 +3,7 @@ from data_whole_vehicle import whole_vehicle_data_2016, whole_vehicle_data_2025
 from data_emotor import emotor_data_2016, emotor_data_2025
 from data_engine import engine_data_2016, engine_data_2025
 from data_gnss import gnss_data_2016, gnss_data_2025
-
+from data_pack_extrema import pack_extrema_data_2016
 """
 GB/T 32960.3-2016 chp7.2.1 table7
 """
@@ -36,7 +36,7 @@ data_types_2016 = Enum(Int8ub,
     fuel_cell_system=0x03,
     engine=0x04,
     gnss=0x05,
-    cell_extrema=0x06,
+    pack_extrema=0x06,
     warnings=0x07,
     cell_volts=0x08,
     probe_temps=0x09,
@@ -54,6 +54,7 @@ data_item_2016 = Struct(
             data_types_2016.emotor: emotor_data_2016,
             data_types_2016.engine: engine_data_2016,
             data_types_2016.gnss: gnss_data_2016,
+            data_types_2016.pack_extrema: pack_extrema_data_2016,
         },
         default=GreedyBytes,
     ),

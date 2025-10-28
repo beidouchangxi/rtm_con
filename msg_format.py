@@ -108,6 +108,8 @@ if __name__=='__main__':
         # GNSS data test
         '232302fe484155563442474e365335303032323139010010190a1b14020205ffffffffffffffffffd5',
         '242402fe484155563442474e36533530303232313901001e190a1b14020205ffffffffffffffffffffff010003aabbcc0004aabbccddd5',
+        # Pack extrema test
+        '232302fe484155563442474e365335303032323139010015190a1b14020206ffffffffffffffffffffffffffffd5',
     )
     for msg in test_msgs:
         print(rtm_msg.parse(bytes.fromhex(msg)))
