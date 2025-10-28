@@ -2,6 +2,7 @@ from datetime import datetime, timezone, timedelta
 
 from construct import (
     Lazy, LazyBound, Peek, Adapter,
+    BitsSwapped, ByteSwapped,
     Error, Probe, this,
     Switch, RepeatUntil, GreedyRange,
     Bytes, GreedyBytes,

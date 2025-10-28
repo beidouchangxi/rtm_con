@@ -3,35 +3,39 @@ from common_items import *
 """
 GB/T 32960.3-2016 chp7.2.3.7 table18
 """
-general_warnings_2016 = BitStruct(
-    "_reserved" / Padding(13),
-    "pack_over_charged_warning" / Flag,
-    "emotor_temp_warning" / Flag,
-    "hv_interlock_warning" / Flag,
-    "emotor_driver_temp_warning" / Flag,
-    "dcdc_state_warning" / Flag,
-    "brake_system_wanring" / Flag,
-    "dcdc_temp_warning" / Flag,
-    "insulation_warning" / Flag,
-    "cell_poor_consistency_warning" / Flag,
-    "pack_unmatched_warning" / Flag,
-    "soc_jump_warning" / Flag,
-    "soc_high_warning" / Flag,
-    "cell_under_volt_warning" / Flag,
-    "cell_over_volt_warning" / Flag,
-    "soc_low_warning" / Flag,
-    "pack_under_volt_warning" / Flag,
-    "pack_over_volt_warning" / Flag,
-    "pack_high_temp_warning" / Flag,
-    "temp_differentce_warning" / Flag,
-)
+general_warnings_2016 = {
+    0: "temp_differentce_warning",
+    1: "pack_high_temp_warning",
+    2: "pack_over_volt_warning",
+    3: "pack_under_volt_warning",
+    4: "soc_low_warning",
+    5: "cell_over_volt_warning",
+    6: "cell_under_volt_warning",
+    7: "soc_high_warning",
+    8: "soc_jump_warning",
+    9: "pack_unmatched_warning",
+    10: "cell_poor_consistency_warning",
+    11: "insulation_warning",
+    12: "dcdc_temp_warning",
+    13: "brake_system_wanring",
+    14: "dcdc_state_warning",
+    15: "emotor_driver_temp_warning",
+    16: "hv_interlock_warning",
+    17: "emotor_temp_warning",
+    18: "pack_over_charged_warning",
+}
+
+general_warning_flags_2016 = BitsSwapped(ByteSwapped(BitStruct(
+    *(name/Flag for index, name in sorted(general_warnings_2016.items())),
+    "_reserved" / Padding(32-len(general_warnings_2016)),
+)))
 
 """
 GB/T 32960.3-2016 chp7.2.3.7 table17
 """
 warnings_data_2016 = Struct(
     "max_warning_level" / Int8ub,
-    "general_warnings" / general_warnings_2016,
+    "general_warnings" / general_warning_flags_2016,
     "pack_failures" / PrefixedArray(Int8ub, Bytes(4)),
     "emotor_failures" / PrefixedArray(Int8ub, Bytes(4)),
     "engine_failures" / PrefixedArray(Int8ub, Bytes(4)),
@@ -41,44 +45,29 @@ warnings_data_2016 = Struct(
 """
 GB/T 32960.3-2025 chp7.2.4.9 table24
 """
-general_warnings_2025 = BitStruct(
-    "_reserved" / Padding(4),
-    "fuel_cell_stack_over_temp_warning" / Flag,
-    "hydrogen_system_temp_abnormal_warning" / Flag,
-    "hydrogen_system_presure_abnormal_warning" / Flag,
-    "hydrogen_leakage_warning" / Flag,
-    "pack_thermal_event_warning" / Flag,
-    "super_capacitor_over_pressure_warning" / Flag,
-    "super_capacitor_over_temp_warning" / Flag,
-    "emotor_over_curr_warning" / Flag,
-    "emotor_over_speed_warning" / Flag,
-    "pack_over_charged_warning" / Flag,
-    "emotor_temp_warning" / Flag,
-    "hv_interlock_warning" / Flag,
-    "emotor_driver_temp_warning" / Flag,
-    "dcdc_state_warning" / Flag,
-    "brake_system_wanring" / Flag,
-    "dcdc_temp_warning" / Flag,
-    "insulation_warning" / Flag,
-    "cell_poor_consistency_warning" / Flag,
-    "pack_unmatched_warning" / Flag,
-    "soc_jump_warning" / Flag,
-    "soc_high_warning" / Flag,
-    "cell_under_volt_warning" / Flag,
-    "cell_over_volt_warning" / Flag,
-    "soc_low_warning" / Flag,
-    "pack_under_volt_warning" / Flag,
-    "pack_over_volt_warning" / Flag,
-    "pack_high_temp_warning" / Flag,
-    "temp_differentce_warning" / Flag,
-)
+general_warnings_2025 = general_warnings_2016 | {
+    19: "emotor_over_speed_warning",
+    20: "emotor_over_curr_warning",
+    21: "super_capacitor_over_temp_warning",
+    22: "super_capacitor_over_pressure_warning",
+    23: "pack_thermal_event_warning",
+    24: "hydrogen_leakage_warning",
+    25: "hydrogen_system_presure_abnormal_warning",
+    26: "hydrogen_system_temp_abnormal_warning",
+    27: "fuel_cell_stack_over_temp_warning",
+}
+
+general_warning_flags_2025 = BitsSwapped(ByteSwapped(BitStruct(
+    *(name/Flag for index, name in sorted(general_warnings_2025.items())),
+    "_reserved" / Padding(32-len(general_warnings_2025)),
+)))
 
 """
 GB/T 32960.3-2025 chp7.2.4.9 table23
 """
 warnings_data_2025 = Struct(
     "max_warning_level" / Int8ub,
-    "general_warnings" / general_warnings_2016,
+    "general_warnings" / general_warning_flags_2025,
     "pack_failures" / PrefixedArray(Int8ub, Bytes(4)),
     "emotor_failures" / PrefixedArray(Int8ub, Bytes(4)),
     "engine_failures" / PrefixedArray(Int8ub, Bytes(4)),
