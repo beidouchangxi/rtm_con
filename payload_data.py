@@ -5,6 +5,9 @@ from data_engine import engine_data_2016, engine_data_2025
 from data_gnss import gnss_data_2016, gnss_data_2025
 from data_pack_extrema import pack_extrema_data_2016
 from data_warnings import warnings_data_2016, warnings_data_2025
+from data_cell_volts import cell_volts_data_2016, cell_volts_data_2025
+from data_probe_temps import probe_temps_data_2016, probe_temps_data_2025
+
 """
 GB/T 32960.3-2016 chp7.2.1 table7
 """
@@ -57,6 +60,8 @@ data_item_2016 = Struct(
             data_types_2016.gnss: gnss_data_2016,
             data_types_2016.pack_extrema: pack_extrema_data_2016,
             data_types_2016.warnings: warnings_data_2016,
+            data_types_2016.cell_volts: cell_volts_data_2016,
+            data_types_2016.probe_temps: probe_temps_data_2016,
         },
         default=GreedyBytes,
     ),
@@ -93,6 +98,8 @@ data_item_2025 = Struct(
             data_types_2025.engine: engine_data_2025,
             data_types_2025.gnss: gnss_data_2025,
             data_types_2025.warnings: warnings_data_2025,
+            data_types_2025.cell_volts: cell_volts_data_2025,
+            data_types_2025.probe_temps: probe_temps_data_2025,
         },
         default=GreedyBytes,
     ),
