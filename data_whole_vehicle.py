@@ -23,6 +23,21 @@ whole_vehicle_data_2016 = Struct(
 )
 
 """
+GB/T 32960.3-2016 anxA.1 tableA.1
+"""
+gear_state_2016 = BitStruct(
+    "_reserved" / Padding(2),
+    "driving_force" / Flag,
+    "braking_force" / Flag,
+    "gear" / Enum(BitsInteger(4), N=0,
+        gp1=1, gp2=2, gp3=3, gp4=4,
+        gp5=5, gp6=6, gp7=7, gp8=8,
+        gp9=9, gp10=10, gp11=11, gp12=12,
+        R=13, D=14, P=15
+    )
+)
+
+"""
 GB/T 32960.3-2025 chp7.2.4.1 table10
 """
 whole_vehicle_data_2025 = Struct(
@@ -35,6 +50,22 @@ whole_vehicle_data_2025 = Struct(
     "current_total" / DataItemAdapter(Int16ub, "A", 0.1, -3000), # different with 2016 protocol
     "soc" / DataItemAdapter(Int8ub, "%"),
     "dcdc_state" / Enum(Int8ub, on=0x01, off=0x02, abnormal=0xfe, invalid=0xff),
-    "gear_state" / Int8ub,
+    "gear_state" / LazyBound(lambda: gear_state_2025),
     "insulation_resistance" / DataItemAdapter(Int16ub, "kΩ"), # 2025 protocol has defined abnormal/invalid
+)
+
+"""
+GB/T 32960.3-2025 anxA.1 tableA.1
+"""
+gear_state_2025 = BitStruct(
+    "gear_postion_validity" / Flag,
+    "_reserved" / Padding(1),
+    "driving_force" / Flag,
+    "braking_force" / Flag,
+    "gear" / Enum(BitsInteger(4), N=0,
+        gp1=1, gp2=2, gp3=3, gp4=4,
+        gp5=5, gp6=6, gp7=7, gp8=8,
+        gp9=9, gp10=10, gp11=11, gp12=12,
+        R=13, D=14, P=15
+    )
 )
