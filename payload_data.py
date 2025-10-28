@@ -1,5 +1,5 @@
 from common_items import *
-from data_items import whole_vehicle_data_2016, whole_vehicle_data_2025
+from data_whole_vehicle import whole_vehicle_data_2016, whole_vehicle_data_2025
 
 """
 GB/T 32960.3-2016 chp7.2.1 table7
