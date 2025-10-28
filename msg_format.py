@@ -102,6 +102,9 @@ if __name__=='__main__':
         # e-Motor data test
         '232302fe484155563442474e365335303032323139010020190a1b1402020202fffffffffffffffffffffffffefefefefefefefefefefefed5',
         '242402fe484155563442474e365335303032323139010029190a1b1402020202fffffffffffffffffffffefefefefefefefefefeff010003aabbcc0004aabbccddd5',
+        # Engine data test
+        '232302fe484155563442474e36533530303232313901000c190a1b14020204ffffffffffd5',
+        '242402fe484155563442474e365335303032323139010016190a1b14020204ffffff010003aabbcc0004aabbccddd5',
     )
     for msg in test_msgs:
         print(rtm_msg.parse(bytes.fromhex(msg)))
