@@ -13,6 +13,22 @@ from construct import (
 )
 
 """
+GB/T 32960.3-2016 chp6.2 table2
+GB/T 32960.3-2025 chp6.2 table2
+"""
+enc_algos = Enum(Int8ub,
+    uncrypted=0x01,
+    rsa=0x02,
+    aes=0x03,
+    # start of newly defined in 2025 protocol
+    sm2=0x04, 
+    sm4=0x05,
+    # end of newly defined in 2025 protocol
+    abnormal=0xfe,
+    invalid=0xff,
+)
+
+"""
 GB/T 32960.3-2016 chp6.4 table5
 GB/T 32960.3-2025 chp6.4 table5
 """
@@ -32,6 +48,21 @@ class RtmTsAdapter(Adapter):
         return bytes((ts_obj_bj.year, ts_obj_bj.month, ts_obj_bj.day, ts_obj_bj.hour, ts_obj_bj.minute, ts_obj_bj.second))
 
 RtmTs = RtmTsAdapter()
+
+"""
+GB/T 32960.3-2025 chp7.2.2 table8
+"""
+payload_sig = Struct(
+    "sig_algo" / Enum(Int8ub, 
+        sm2=1,
+        rsa=2,
+        ecc=3,
+    ),
+    "sig_r_len" / Int16ub,
+    "sig_r" / Bytes(this.sig_r_len),
+    "sig_s_len" / Int16ub,
+    "sig_s" / Bytes(this.sig_s_len),
+)
 
 """
 Handle Numbers with factor, offset and unit

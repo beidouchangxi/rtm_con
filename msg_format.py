@@ -16,16 +16,7 @@ rtm_msg = Struct(
     "msg_type"  / LazyBound(lambda: msg_types),
     "ack"       / LazyBound(lambda: ack_flags),
     "vin"       / PaddedString(17, "ascii"),
-    "enc"       / Enum(Int8ub,
-        uncrypted=0x01,
-        rsa=0x02,
-        aes=0x03,
-        # start of newly defined in 2025 protocol
-        sm2=0x04, 
-        sm4=0x05,
-        # end of newly defined in 2025 protocol
-        abnormal=0xfe,
-        invalid=0xff),
+    "enc"       / enc_algos,
     "payload"   / Prefixed(
         Int16ub,
         LazyBound(lambda: payload_mapping),

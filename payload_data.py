@@ -23,11 +23,7 @@ data_2025 = Struct(
     "timestamp" / RtmTs,
     "data_list" / LazyBound(lambda: data_items_2025),
     "sig_starter" / Const(b'\xff'),
-    "sig_algo" / LazyBound(lambda: sig_algos),
-    "sig_r_len" / Int16ub,
-    "sig_r" / Bytes(this.sig_r_len),
-    "sig_s_len" / Int16ub,
-    "sig_s" / Bytes(this.sig_s_len),
+    "sig" / payload_sig,
 )
 
 """
@@ -109,13 +105,4 @@ data_item_2025 = Struct(
 data_items_2025 = RepeatUntil(
     lambda obj, lst, ctx: (lst and lst[-1]._peek_type==0xff),
     data_item_2025,
-)
-
-"""
-GB/T 32960.3-2025 chp7.2.2 table8
-"""
-sig_algos = Enum(Int8ub, 
-    sm2=1,
-    rsa=2,
-    ecc=3,
 )
