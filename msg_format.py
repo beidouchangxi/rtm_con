@@ -1,5 +1,6 @@
 from common_items import *
-from payload_login import login_2016, login_2025
+from payload_login import login_2016, plt_login_2016, login_2025, plt_login_2025
+from payload_logout import logout_2016, plt_logout_2016, logout_2025, plt_logout_2025
 from payload_data import data_2016, data_2025
 """
 GB/T 32960.3-2016 chp6.2 table2
@@ -82,10 +83,16 @@ payload_mapping = Switch(
         (rtm_ver.protocol_2016, ack_flags.command, msg_types.login): login_2016,
         (rtm_ver.protocol_2016, ack_flags.command, msg_types.realtime): data_2016,
         (rtm_ver.protocol_2016, ack_flags.command, msg_types.supplimentary): data_2016,
+        (rtm_ver.protocol_2016, ack_flags.command, msg_types.logout): logout_2016,
+        (rtm_ver.protocol_2016, ack_flags.command, msg_types.plt_login): plt_login_2016,
+        (rtm_ver.protocol_2016, ack_flags.command, msg_types.plt_logout): plt_logout_2016,
         # For 2025 protocol
         (rtm_ver.protocol_2025, ack_flags.command, msg_types.login): login_2025,
         (rtm_ver.protocol_2025, ack_flags.command, msg_types.realtime): data_2025,
         (rtm_ver.protocol_2025, ack_flags.command, msg_types.supplimentary): data_2025,
+        (rtm_ver.protocol_2025, ack_flags.command, msg_types.logout): logout_2025,
+        (rtm_ver.protocol_2025, ack_flags.command, msg_types.plt_login): plt_login_2025,
+        (rtm_ver.protocol_2025, ack_flags.command, msg_types.plt_logout): plt_logout_2025,
     },
     # Normally the ack message contains only timestamp
     default=IfThenElse(this.ack!=ack_flags.command, Struct("timestamp"/RtmTs), GreedyBytes),
@@ -122,6 +129,15 @@ if __name__=='__main__':
         '242402fe484155563442474e365335303032323139010020190a1b1402020802ff0000050005ffffffffffff010003aabbcc0004aabbccddd5',
         # Oen-define data test
         '232302fe484155563442474e365335303032323139010019190a1b140202800010fefefefefefefefefefefefefefefefed5',
+        # Logout test
+        '232304fe484155563442474e365335303032323139010008190a1b1402020802d5',
+        '242404fe484155563442474e365335303032323139010008190a1b1402020802d5',
+        # Platform login test
+        '232305fe484155563442474e365335303032323139010029190a1b1402020802484155563442474e36533530484155563442474e36533530303232313948415501d5',
+        '242405fe484155563442474e365335303032323139010029190a1b1402020802484155563442474e36533530484155563442474e36533530303232313948415501d5',
+        # Platform logout test
+        '232306fe484155563442474e365335303032323139010008190a1b1402020802d5',
+        '242406fe484155563442474e365335303032323139010008190a1b1402020802d5',
         # Ack test
         '24240101484155563442474e365335303032323139010006190a1b14020218',
     )

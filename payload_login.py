@@ -32,3 +32,25 @@ login_2025 = Struct(
         )
     ),
 )
+
+"""
+GB/T 32960.3-2016 chp7.4 table21
+GB/T 32960.3-2025 chp7.4 table29
+"""
+plt_login_2016 = plt_login_2025 = Struct(
+    "timestamp" / RtmTs,
+    "session_id" / Int16ub,
+    "username" / PaddedString(12, "ascii"),
+    "password" / PaddedString(20, "ascii"),
+    "enc" / Enum(Int8ub,
+        uncrypted=0x01,
+        rsa=0x02,
+        aes=0x03,
+        # start of newly defined in 2025 protocol
+        sm2=0x04, 
+        sm4=0x05,
+        # end of newly defined in 2025 protocol
+        abnormal=0xfe,
+        invalid=0xff),
+
+)
