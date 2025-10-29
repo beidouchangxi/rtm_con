@@ -101,7 +101,7 @@ data_item_2025 = Struct(
             data_types_2025.cell_volts: cell_volts_data_2025,
             data_types_2025.probe_temps: probe_temps_data_2025,
         },
-        default=GreedyBytes,
+        default=IfThenElse(0x80<=this.data_type.intvalue<=0xfe, Prefixed(Int16ub, GreedyBytes), GreedyBytes),
     ),
     "_peek_type" / Peek(Int8ub),
 )
