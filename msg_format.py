@@ -58,21 +58,6 @@ msg_types = Enum(Int8ub,
         # 0xc0~0xfe platform reserve
 )
 
-payload_mapping = Switch(
-    lambda this: (this.starter, this.msg_type),
-    {
-        # For 2016 protocol
-        (rtm_ver.protocol_2016, msg_types.login): login_2016,
-        (rtm_ver.protocol_2016, msg_types.realtime): data_2016,
-        (rtm_ver.protocol_2016, msg_types.supplimentary): data_2016,
-        # For 2025 protocol
-        (rtm_ver.protocol_2025, msg_types.login): login_2025,
-        (rtm_ver.protocol_2025, msg_types.realtime): data_2025,
-        (rtm_ver.protocol_2025, msg_types.supplimentary): data_2025,
-    },
-    default=GreedyBytes,
-)
-
 """
 GB/T 32960.3-2016 chp6.3.2 table4
 GB/T 32960.3-2025 chp6.3.2 table4
@@ -88,6 +73,22 @@ ack_flags = Enum(Int8ub,
     decryption_failed=0x07,
     # end of newly defined in 2025 protocol
     command=0xfe,
+)
+
+payload_mapping = Switch(
+    lambda this: (this.starter, this.ack, this.msg_type),
+    {
+        # For 2016 protocol
+        (rtm_ver.protocol_2016, ack_flags.command, msg_types.login): login_2016,
+        (rtm_ver.protocol_2016, ack_flags.command, msg_types.realtime): data_2016,
+        (rtm_ver.protocol_2016, ack_flags.command, msg_types.supplimentary): data_2016,
+        # For 2025 protocol
+        (rtm_ver.protocol_2025, ack_flags.command, msg_types.login): login_2025,
+        (rtm_ver.protocol_2025, ack_flags.command, msg_types.realtime): data_2025,
+        (rtm_ver.protocol_2025, ack_flags.command, msg_types.supplimentary): data_2025,
+    },
+    # Normally the ack message contains only timestamp
+    default=IfThenElse(this.ack!=ack_flags.command, Struct("timestamp"/RtmTs), GreedyBytes),
 )
 
 if __name__=='__main__':
@@ -119,6 +120,8 @@ if __name__=='__main__':
         # Probe temps test
         '232302fe484155563442474e365335303032323139010013190a1b1402020902ff0000050005ffffffffffd5',
         '242402fe484155563442474e365335303032323139010020190a1b1402020802ff0000050005ffffffffffff010003aabbcc0004aabbccddd5',
+        # Ack test
+        '24240101484155563442474e365335303032323139010006190a1b14020218',
     )
     
     for msg in test_msgs:

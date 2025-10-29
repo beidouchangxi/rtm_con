@@ -4,7 +4,7 @@ from construct import (
     Lazy, LazyBound, Peek, Adapter,
     BitsSwapped, ByteSwapped,
     Error, Probe, this,
-    Switch, RepeatUntil, GreedyRange,
+    Switch, RepeatUntil, IfThenElse, GreedyRange,
     Bytes, GreedyBytes,
     BitStruct, Flag, BitsInteger, Padding,
     Struct, Const, Enum, Prefixed, Array, PrefixedArray,
