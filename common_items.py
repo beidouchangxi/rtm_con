@@ -10,6 +10,7 @@ from construct import (
     Struct, Const, Enum, Prefixed, Array, PrefixedArray,
     PaddedString,
     Int8ub, Int16ub, Int32ub,
+    Checksum, Tell,
 )
 
 """
