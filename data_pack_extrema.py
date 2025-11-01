@@ -12,10 +12,10 @@ pack_extrema_data_2016 = Struct(
     "min_cell_volt" / DataItemAdapter(Int16ub, "V", 0.001),
     "max_temp_pack_index" / DataItemAdapter(Int8ub, ""),
     "max_temp_cell_index" / DataItemAdapter(Int8ub, ""),
-    "max_cell_temp" / DataItemAdapter(Int8ub, "℃", "1", "-40"),
+    "max_cell_temp" / DataItemAdapter(Int8ub, "℃", 1, -40),
     "min_temp_pack_index" / DataItemAdapter(Int8ub, ""),
     "min_temp_cell_index" / DataItemAdapter(Int8ub, ""),
-    "min_cell_temp" / DataItemAdapter(Int8ub, "℃", "1", "-40"),
+    "min_cell_temp" / DataItemAdapter(Int8ub, "℃", 1, -40),
 )
 
 # This data item has been deleted in 2025 protocol
