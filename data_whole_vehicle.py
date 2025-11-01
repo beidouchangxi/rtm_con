@@ -17,9 +17,9 @@ whole_vehicle_data_2016 = Struct(
     "gear_state" / LazyBound(lambda: gear_state_2016),
     # No abnormal/invalid defined here anyway
     "insulation_resistance" / DataItemAdapter(Int16ub, "kΩ", validation=False),
-    "brake_padel" / DataItemAdapter(Int8ub, "%"),
-    # This one is special, which one may be a boolean(off=0/on=101) or int(0~100%), but I see no necessarity to handle the boolean.
     "accelerator_padel" / DataItemAdapter(Int8ub, "%"),
+    # This one is special, which one may be a boolean(off=0/on=101) or int(0~100%), but I see no necessarity to handle the boolean.
+    "brake_padel" / DataItemAdapter(Int8ub, "%"),
 )
 
 """
