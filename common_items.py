@@ -46,7 +46,7 @@ class RtmTsAdapter(Adapter):
     
     def _encode(self, ts_obj_local, context, path):
         ts_obj_bj = ts_obj_local.astimezone(BEIJING_TZ)
-        return bytes((ts_obj_bj.year%2000, ts_obj_bj.month, ts_obj_bj.day, ts_obj_bj.hour, ts_obj_bj.minute, ts_obj_bj.second))
+        return bytes((ts_obj_bj.year%100, ts_obj_bj.month, ts_obj_bj.day, ts_obj_bj.hour, ts_obj_bj.minute, ts_obj_bj.second))
 
 RtmTs = RtmTsAdapter()
 
