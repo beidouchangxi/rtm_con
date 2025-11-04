@@ -3,13 +3,7 @@ from common_items import *
 """
 GB/T 32960.3-2016 chp7.2.3.2 table10
 """
-emotor_data_2016 = Struct(
-    "emotor_total" / Int8ub,
-    "emotor_list" / RepeatUntil(
-        lambda obj, lst, ctx: (len(lst)==ctx.emotor_total),
-        LazyBound(lambda: emotor_item_2016),
-    )
-)
+emotor_data_2016 = PrefixedArray(Int8ub, LazyBound(lambda: emotor_item_2016))
 
 """
 GB/T 32960.3-2016 chp7.2.3.2 table11
@@ -30,13 +24,7 @@ emotor_item_2016 = Struct(
 """
 GB/T 32960.3-2025 chp7.2.4.4 table15
 """
-emotor_data_2025 = Struct(
-    "emotor_total" / Int8ub,
-    "emotor_list" / RepeatUntil(
-        lambda obj, lst, ctx: (len(lst)==ctx.emotor_total),
-        LazyBound(lambda: emotor_item_2025),
-    )
-)
+emotor_data_2025 = "emotors" / PrefixedArray(Int8ub, LazyBound(lambda: emotor_item_2025))
 
 """
 GB/T 32960.3-2025 chp7.2.4.4 table16
