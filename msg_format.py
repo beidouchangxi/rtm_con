@@ -2,6 +2,8 @@ from common_items import *
 from payload_login import login_2016, plt_login_2016, login_2025, plt_login_2025
 from payload_logout import logout_2016, plt_logout_2016, logout_2025, plt_logout_2025
 from payload_data import data_2016, data_2025
+from payload_activation import activation_2025, activation_response_2025
+from payload_payload_key_sync import payload_key_sync_2025
 from functools import reduce
 """
 GB/T 32960.3-2016 chp6.2 table2
@@ -32,24 +34,32 @@ rtm_msg = Struct(
 
 """
 GB/T 32960.3-2016 chp6.3.1 table3
+GB/T 32960.3-2016 anxB.3.3.1 tableB.2
 GB/T 32960.3-2025 chp6.3.1 table3
+GB/T 32960.3-2025 anxB.3.3.1 tableB.2
 """
 msg_types = Enum(Int8ub, 
-    login=1,
-    realtime=2,
-    supplimentary=3,
-    logout=4,
-    plt_login=5,
-    plt_logout=6,
+    login=0x01,
+    realtime=0x02,
+    supplimentary=0x03,
+    logout=0x04,
+    plt_login=0x05,
+    plt_logout=0x06,
+    heartbeat=0x07,
+    time_sync=0x08,
+    # start of newly defined in 2025 protocol
+    activation=0x09,
+    activation_response=0x0a,
+    payload_key_sync=0x0b,
+    # end of newly defined in 2025 protocol
+    get=0x80,
+    set=0x81,
+    control=0x82,
     # GB/T 32960.3-2016 chp6.3.1 table3
-        # 0x07~0x08 client reserve
         # 0x09~0x7f uplink reserve
-        # 0x80~0x82 client reserve
         # 0x83~0xbf downlink reserve
         # 0xc0~0xfe platform reserve
     # GB/T 32960.3-2025 chp6.3.1 table3
-        # 0x07~0x0A client reserve
-        # 0x0b payload encryption key exchange
         # 0x0c~0x7f uplink reserve
         # 0x80~0x82 client reserve
         # 0x83~0xbf downlink reserve
@@ -90,6 +100,9 @@ payload_mapping = Switch(
         (rtm_ver.protocol_2025, ack_flags.command, msg_types.logout): logout_2025,
         (rtm_ver.protocol_2025, ack_flags.command, msg_types.plt_login): plt_login_2025,
         (rtm_ver.protocol_2025, ack_flags.command, msg_types.plt_logout): plt_logout_2025,
+        (rtm_ver.protocol_2025, ack_flags.command, msg_types.activation): activation_2025,
+        (rtm_ver.protocol_2025, ack_flags.command, msg_types.activation_response): activation_response_2025,
+        (rtm_ver.protocol_2025, ack_flags.command, msg_types.payload_key_sync): payload_key_sync_2025,
     },
     # Normally the ack message contains only timestamp
     default=IfThenElse(this.ack!=ack_flags.command, Struct("timestamp"/RtmTs), GreedyBytes),
