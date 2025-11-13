@@ -54,15 +54,15 @@ RtmTs = RtmTsAdapter()
 GB/T 32960.3-2025 chp7.2.2 table8
 """
 payload_sig = Struct(
-    "sig_algo" / Enum(Int8ub, 
+    "algo" / Enum(Int8ub, 
         sm2=1,
         rsa=2,
         ecc=3,
     ),
-    "sig_r_len" / Int16ub,
-    "sig_r" / Bytes(this.sig_r_len),
-    "sig_s_len" / Int16ub,
-    "sig_s" / Bytes(this.sig_s_len),
+    "r_len" / Int16ub,
+    "r_value" / Bytes(this.r_len),
+    "s_len" / Int16ub,
+    "s_value" / Bytes(this.s_len),
 )
 
 """
@@ -123,7 +123,10 @@ class DataItem(object):
     
     def __str__(self):
         if self.valid:
-            return "%s %s" % (self.value, self.unit)
+            if self.unit:
+                return "%s %s" % (self.value, self.unit)
+            else:
+                return "%s" % (self.value)
         elif self.valid==None:
             return "Invalid"
         else:
