@@ -14,13 +14,24 @@ rtm_ver = Enum(Int16ub,
     protocol_2025=0x2424,
     )
 
-def check_body(ths):
+rtm_msg = Struct( # Only parse the message without verifying the checksum
+    "starter" / rtm_ver, 
+    "msg_type" / LazyBound(lambda: msg_types),
+    "ack" / LazyBound(lambda: ack_flags),
+    "vin" / PaddedString(17, "ascii"),
+    "enc" / enc_algos,
+    "payload" / Prefixed(Int16ub, LazyBound(lambda: payload_mapping)),
+    "checksum" / Int8ub,
+)
+
+
+def check_body(ths): # Find the data to be checksummed
     ths._io.seek(ths._checking_start)
     body = ths._io.read(ths._checking_end-ths._checking_start)
     ths._io.seek(ths._checking_end)
     return reduce(lambda x,y: x^y, body)
 
-rtm_msg = Struct(
+rtm_msg_checked = Struct( # Calculate and verify automatically the checksum
     "starter" / rtm_ver, 
     "_checking_start" / Tell,
     "msg_type" / LazyBound(lambda: msg_types),
@@ -31,6 +42,7 @@ rtm_msg = Struct(
     "_checking_end" / Tell,
     "checksum" / Checksum(Int8ub, check_body, this),
 )
+
 
 """
 GB/T 32960.3-2016 chp6.3.1 table3
