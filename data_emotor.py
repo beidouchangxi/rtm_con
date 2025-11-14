@@ -10,7 +10,7 @@ GB/T 32960.3-2016 chp7.2.3.2 table11
 """
 emotor_item_2016 = Struct(
     "index" / Int8ub,
-    "state" / Enum(Int8ub, power_consuming=0x01, power_generating=0x02, off=0x03, idle=0x04, abnormal=0xfe, invalid=0xff),
+    "state" / Enum(Int8ub, consuming_power=0x01, generating_power=0x02, off=0x03, idle=0x04, abnormal=0xfe, invalid=0xff),
     "ctrl_temp" / DataItemAdapter(Int8ub, "℃", 1, -40),
     # For some strange reason, the offset for speed and torque are marked without unit in GB/T 32960.3-2016
     # Which means, the offset is added before factor, this is different with any other date item
@@ -31,7 +31,7 @@ GB/T 32960.3-2025 chp7.2.4.4 table16
 """
 emotor_item_2025 = Struct(
     "index" / Int8ub,
-    "state" / Enum(Int8ub, power_consuming=0x01, power_generating=0x02, off=0x03, idle=0x04, abnormal=0xfe, invalid=0xff),
+    "state" / Enum(Int8ub, consuming_power=0x01, generating_power=0x02, off=0x03, idle=0x04, abnormal=0xfe, invalid=0xff),
     "ctrl_temp" / DataItemAdapter(Int8ub, "℃", 1, -40),
     "speed" / DataItemAdapter(Int16ub, "rpm", 1, -32000),
     "torque" / DataItemAdapter(Int32ub, "N·m", 0.1, -20000),
