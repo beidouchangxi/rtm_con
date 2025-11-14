@@ -58,7 +58,7 @@ whole_vehicle_data_2025 = Struct(
 GB/T 32960.3-2025 anxA.1 tableA.1
 """
 gear_state_2025 = BitStruct(
-    "gear_postion_validity" / Flag,
+    "gear_postion_validity" / Enum(BitsInteger(1), valid=0,invalid=1),
     "_reserved" / Padding(1),
     "driving_force" / Flag,
     "braking_force" / Flag,
