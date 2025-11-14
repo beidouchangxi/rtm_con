@@ -18,6 +18,13 @@ class FlattenedMsg(dict):
                             # For signature or other nested Containers
                             for k_s, v_s in v_p.items():
                                 self._checkout(k_s, v_s, prefix=f"{k_p}-")
+                        elif isinstance(v_p, ListContainer):
+                            # For battery SNs
+                            if v_p and all(isinstance(i, ListContainer) for i in v_p):
+                                output = [list(item) for item in v_p]
+                            else:
+                                output = list(v_p)
+                            self._checkout(k_p, output)
                         else:
                             # Nromal items like timestamp
                             self._checkout(k_p, v_p)
