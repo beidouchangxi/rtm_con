@@ -7,6 +7,7 @@ from data_pack_extrema import pack_extrema_data_2016
 from data_warnings import warnings_data_2016, warnings_data_2025
 from data_cell_volts import cell_volts_data_2016, cell_volts_data_2025
 from data_probe_temps import probe_temps_data_2016, probe_temps_data_2025
+from data_oem_define import oem_define_data_2016, oem_define_data_2025
 
 """
 GB/T 32960.3-2016 chp7.2.1 table7
@@ -40,7 +41,7 @@ data_item_2016 = Struct(
             data_types_2016.cell_volts: cell_volts_data_2016,
             data_types_2016.probe_temps: probe_temps_data_2016,
         } | { # oem defined data
-            k:HexAdapter(con=Prefixed(Int16ub, GreedyBytes)) for k in range(0x80, 0xfe+1)
+            k:oem_define_data_2016 for k in range(0x80, 0xfe+1)
         },
         default=HexAdapter(con=GreedyBytes), # unkown data
     ),
@@ -59,7 +60,7 @@ data_item_2025 = Struct(
             data_types_2025.cell_volts: cell_volts_data_2025,
             data_types_2025.probe_temps: probe_temps_data_2025,
         } | { # oem defined data
-            k:HexAdapter(con=Prefixed(Int16ub, GreedyBytes)) for k in range(0x80, 0xfe+1)
+            k:oem_define_data_2025 for k in range(0x80, 0xfe+1)
         },
         default=HexAdapter(con=GreedyBytes), # unkown data
     ),

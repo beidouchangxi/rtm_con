@@ -10,7 +10,7 @@ engine_data_2016 = Struct(
 )
 
 """
-GB/T 32960.3-2016 chp7.2.4.7 table20
+GB/T 32960.3-2025 chp7.2.4.7 table20
 """
 engine_data_2025 = Struct(
     "engine_torque" / DataItemAdapter(Int16ub, "rpm"),
