@@ -99,9 +99,9 @@ class FlattenedMsg(dict):
                 if k_w=="general_warning_list":
                     for gw_info in v_w:
                         if gw_flags.get(gw_info.warning, False):
-                            self._checkout(gw_info.warning, 0-gw_info.level, prefix=duplication_prefix)
-                        else:
                             self._checkout(gw_info.warning, gw_info.level, prefix=duplication_prefix)
+                        else:
+                            self._checkout(gw_info.warning, 0-gw_info.level, prefix=duplication_prefix)
                 else: # For warning codes
                     self._checkout(k_w, list(v_w), prefix=duplication_prefix)
             else:
