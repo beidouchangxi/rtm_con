@@ -39,8 +39,10 @@ data_item_2016 = Struct(
             data_types_2016.warnings: warnings_data_2016,
             data_types_2016.cell_volts: cell_volts_data_2016,
             data_types_2016.probe_temps: probe_temps_data_2016,
+        } | { # oem defined data
+            k:HexAdapter(con=Prefixed(Int16ub, GreedyBytes)) for k in range(0x80, 0xfe+1)
         },
-        default=HexAdapter(con=GreedyBytes), # TBD: oem defined data
+        default=HexAdapter(con=GreedyBytes), # unkown data
     ),
 )
 
@@ -56,8 +58,10 @@ data_item_2025 = Struct(
             data_types_2025.warnings: warnings_data_2025,
             data_types_2025.cell_volts: cell_volts_data_2025,
             data_types_2025.probe_temps: probe_temps_data_2025,
+        } | { # oem defined data
+            k:HexAdapter(con=Prefixed(Int16ub, GreedyBytes)) for k in range(0x80, 0xfe+1)
         },
-        default=HexAdapter(con=GreedyBytes), # TBD: oem defined data
+        default=HexAdapter(con=GreedyBytes), # unkown data
     ),
     "_peek_type" / Peek(Int8ub),
 )
