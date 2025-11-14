@@ -22,7 +22,7 @@ GB/T 32960.3-2025 chp7.2.1 table7
 data_2025 = Struct(
     "timestamp" / RtmTs,
     "data_list" / LazyBound(lambda: data_items_2025),
-    "sig_starter" / Const(b'\xff'),
+    "sig_starter" / HexAdapter(con=Const(b'\xff')),
     "sig" / payload_sig,
 )
 
@@ -40,7 +40,7 @@ data_item_2016 = Struct(
             data_types_2016.cell_volts: cell_volts_data_2016,
             data_types_2016.probe_temps: probe_temps_data_2016,
         },
-        default=GreedyBytes,
+        default=HexAdapter(con=GreedyBytes), # TBD: oem defined data
     ),
 )
 
@@ -57,7 +57,7 @@ data_item_2025 = Struct(
             data_types_2025.cell_volts: cell_volts_data_2025,
             data_types_2025.probe_temps: probe_temps_data_2025,
         },
-        default=IfThenElse(0x80<=this.data_type.intvalue<=0xfe, Prefixed(Int16ub, GreedyBytes), GreedyBytes),
+        default=HexAdapter(con=GreedyBytes), # TBD: oem defined data
     ),
     "_peek_type" / Peek(Int8ub),
 )

@@ -36,10 +36,10 @@ GB/T 32960.3-2016 chp7.2.3.7 table17
 warnings_data_2016 = Struct(
     "max_warning_level" / Int8ub,
     "general_warnings" / general_warning_flags_2016,
-    "pack_failures" / PrefixedArray(Int8ub, Bytes(4)),
-    "emotor_failures" / PrefixedArray(Int8ub, Bytes(4)),
-    "engine_failures" / PrefixedArray(Int8ub, Bytes(4)),
-    "other_failures" / PrefixedArray(Int8ub, Bytes(4)),
+    "pack_failures" / PrefixedArray(Int8ub, HexAdapter(4)),
+    "emotor_failures" / PrefixedArray(Int8ub, HexAdapter(4)),
+    "engine_failures" / PrefixedArray(Int8ub, HexAdapter(4)),
+    "other_failures" / PrefixedArray(Int8ub, HexAdapter(4)),
 )
 
 """
@@ -68,10 +68,10 @@ GB/T 32960.3-2025 chp7.2.4.9 table23
 warnings_data_2025 = Struct(
     "max_warning_level" / Int8ub,
     "general_warnings" / general_warning_flags_2025,
-    "pack_failures" / PrefixedArray(Int8ub, Bytes(4)),
-    "emotor_failures" / PrefixedArray(Int8ub, Bytes(4)),
-    "engine_failures" / PrefixedArray(Int8ub, Bytes(4)),
-    "other_failures" / PrefixedArray(Int8ub, Bytes(4)),
+    "pack_failures" / PrefixedArray(Int8ub, HexAdapter(4)),
+    "emotor_failures" / PrefixedArray(Int8ub, HexAdapter(4)),
+    "engine_failures" / PrefixedArray(Int8ub, HexAdapter(4)),
+    "other_failures" / PrefixedArray(Int8ub, HexAdapter(4)),
     "general_warning_list" / PrefixedArray(Int8ub,
         Struct(
             "warning" / Enum(Int8ub, **{name: index for index, name in general_warnings_2025.items()}),

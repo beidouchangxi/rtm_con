@@ -7,7 +7,7 @@ activation_2025 = Struct(
     "timestamp" / RtmTs,
     "sec_chip_id" / PaddedString(16, "ascii"),
     "pubkey_len" / Int16ub,
-    "pubkey" / Bytes(this.pubkey_len),
+    "pubkey" / HexAdapter(this.pubkey_len),
     "vin" / PaddedString(17, "ascii"),
     "sig" / payload_sig,
 )
