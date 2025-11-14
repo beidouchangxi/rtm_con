@@ -70,7 +70,7 @@ class FlattenedMsg(dict):
                                 self._checkout(d_name, d_value, prefix=duplication_prefix)
                     else:
                         # Self-defined data?
-                        self._checkout(data_block.data_type, "pass", prefix=duplication_prefix)    
+                        self._checkout(data_block.data_type, data_block.data_content, prefix=duplication_prefix)    
 
     def _check_data_duplication(self, data_blocks):
         '''
