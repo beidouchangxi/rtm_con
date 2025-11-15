@@ -50,7 +50,7 @@ class DataItem(object):
         return bool(self.value)
     
     def __eq__(self, other):
-        if isinstance(other, PhysicalValue):
+        if isinstance(other, type):
             return self.value == other.value and self.unit == other.unit
         return self.value == other
 
