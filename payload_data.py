@@ -62,7 +62,13 @@ data_item_2025 = Struct(
         } | { # oem defined data
             k:oem_define_data_2025 for k in range(0x80, 0xfe+1)
         },
-        default=HexAdapter(con=GreedyBytes), # unkown data
+        default=RepeatUntil(
+            lambda obj, lst, ctx: (lst and lst[-1]._peek_byte==0xff),
+            Struct(
+                "data_byte" / Int8ub,
+                "_peek_byte" / Peek(Int8ub),
+            )
+        ), # unkown data then read until 0xff
     ),
     "_peek_type" / Peek(Int8ub),
 )
