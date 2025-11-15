@@ -1,5 +1,4 @@
-from msg_format import rtm_msg
-from msg_flatten import FlattenedMsg
+from rtm_con import rtm_msg, FlattenedMsg
 
 if __name__=='__main__':
     test_msgs = (

@@ -1,4 +1,4 @@
-from common_items import *
+from rtm_con.common_items import *
 
 """
 GB/T 32960.3-2016 anxB.3.5.3.8 tableB.5

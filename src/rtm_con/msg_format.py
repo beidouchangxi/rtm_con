@@ -1,9 +1,9 @@
-from common_items import *
-from payload_login import login_2016, plt_login_2016, login_2025, plt_login_2025
-from payload_logout import logout_2016, plt_logout_2016, logout_2025, plt_logout_2025
-from payload_data import data_2016, data_2025
-from payload_activation import activation_2025, activation_response_2025
-from payload_payload_key_sync import payload_key_sync_2025
+from rtm_con.common_items import *
+from rtm_con.payload_login import login_2016, plt_login_2016, login_2025, plt_login_2025
+from rtm_con.payload_logout import logout_2016, plt_logout_2016, logout_2025, plt_logout_2025
+from rtm_con.payload_data import data_2016, data_2025
+from rtm_con.payload_activation import activation_2025, activation_response_2025
+from rtm_con.payload_payload_key_sync import payload_key_sync_2025
 from functools import reduce
 """
 GB/T 32960.3-2016 chp6.2 table2
