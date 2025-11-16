@@ -23,12 +23,7 @@ class DataItem(object):
         self.unit = unit
         self.valid = validity
     def __repr__(self):
-        if self.valid:
-            return "<DataItem %s %s>" % (self.value, self.unit)
-        elif self.valid==None:
-            return "<DataItem Invalid>"
-        else:
-            return "<DataItem Abnormal>"
+        return f"DataItem({self.value}, {self.unit}, {self.valid})"
     
     def __str__(self):
         if self.valid:
@@ -52,7 +47,7 @@ class DataItem(object):
     
     def __eq__(self, other):
         if isinstance(other, type):
-            return self.value == other.value and self.unit == other.unit
+            return self.value == other.value and self.unit == other.unit and self.valid == other.valid
         return self.value == other
 
 class DataItemAdapter(Adapter):
