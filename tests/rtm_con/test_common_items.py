@@ -38,3 +38,12 @@ def test_DataItem_eq(value,unit,valid):
     item1 = rtm_common.DataItem(value, unit, valid)
     item2 = rtm_common.DataItem(value, unit, valid)
     assert item1 == item2
+
+
+def test_DataItemAdapter():
+    from construct import Int16ub
+    adapter = rtm_common.DataItemAdapter(Int16ub, "km", 1, 0, validation=True)
+    assert adapter.parse(bytes.fromhex("00c8")) == rtm_common.DataItem(200, "km", True)
+    assert adapter.build(rtm_common.DataItem(200, "km", True)) == bytes.fromhex("00c8")
+    assert adapter.parse(bytes.fromhex("fffe")) == rtm_common.DataItem(65534, "km", False)
+    assert adapter.parse(bytes.fromhex("ffff")) == rtm_common.DataItem(65535, "km", None)
