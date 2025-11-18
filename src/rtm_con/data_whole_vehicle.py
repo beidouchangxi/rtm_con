@@ -5,7 +5,7 @@ GB/T 32960.3-2016 chp7.2.3.1 table9
 GB/T 32960.3-2016 anxB.3.5.3.1 tableB.4
 """
 whole_vehicle_data_2016 = Struct(
-    "vehicle_state" / Enum(Int8ub, on=0x01, off=0x03, other=0x03, abnormal=0xfe, invalid=0xff),
+    "vehicle_state" / Enum(Int8ub, on=0x01, off=0x02, other=0x03, abnormal=0xfe, invalid=0xff),
     "charge_state" / Enum(Int8ub, parking_charging=0x01, driving_charging=0x02, uncharged=0x03, completed_charging=0x04, abnormal=0xfe, invalid=0xff),
     "operate_state" / Enum(Int8ub, pure_electric=0x01, hybrid=0x02, fuel=0x03, abnormal=0xfe, invalid=0xff),
     "vehicle_speed" / DataItemAdapter(Int16ub, "km/h", 0.1),
