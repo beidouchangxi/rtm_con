@@ -1,2 +1,2 @@
 from .msg_format import *
-from .msg_flatten import FlattenedMsg
+from .msg_flatten import flat_msg

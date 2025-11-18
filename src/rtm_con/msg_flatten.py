@@ -1,7 +1,7 @@
 from rtm_con.msg_format import *
 from collections import Counter
 
-class FlattenedMsg(dict):
+class flat_msg(dict):
     def __init__(self, msg_obj):
         super().__init__()
         for k_m, v_m in msg_obj.items():

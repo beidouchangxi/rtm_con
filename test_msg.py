@@ -1,4 +1,4 @@
-from rtm_con import rtm_msg, FlattenedMsg
+from rtm_con import rtm_msg, flat_msg
 
 if __name__=='__main__':
     test_msgs = (
@@ -63,5 +63,5 @@ if __name__=='__main__':
         msg_obj = rtm_msg.parse(bytes.fromhex(msg))
         print(msg_obj)
         print("\nfor flattened message:")
-        for k,v in FlattenedMsg(msg_obj).items():
+        for k,v in flat_msg(msg_obj).items():
             print(f"{k:<50}{v}")
