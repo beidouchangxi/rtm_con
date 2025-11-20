@@ -63,5 +63,7 @@ if __name__=='__main__':
         msg_obj = rtm_msg.parse(bytes.fromhex(msg))
         print(msg_obj)
         print("\nfor flattened message:")
-        for k,v in flat_msg(msg_obj).items():
+        flat_dict = flat_msg(msg_obj)
+        for k,v in flat_dict.items():
             print(f"{k:<50}{v}")
+            print(f"{"":<50}{flat_dict.pathdict[k]}")
