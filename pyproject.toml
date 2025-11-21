@@ -10,7 +10,8 @@ readme = "README.md"
 license = { text = "GPLv2" }
 authors = [{ name = "BeidouChangxi", email = "Beidoustar@Gmail.com" }]
 dependencies = [
-    "construct"
+    "construct",
+    "openpyxl"
 ]
 
 [project.optional-dependencies]
