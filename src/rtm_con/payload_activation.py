@@ -1,4 +1,16 @@
-from rtm_con.common_items import *
+from construct import (
+    Struct,
+    PaddedString,
+    Int16ub,
+    this,
+    Enum,
+    Int8ub,
+)
+from rtm_con.common_items import (
+    RtmTs,
+    HexAdapter,
+    payload_sig,
+)
 
 """
 GB/T 32960.3-2025 anxB.3.5.5 tableB.3

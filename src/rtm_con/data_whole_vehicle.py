@@ -1,4 +1,17 @@
-from rtm_con.common_items import *
+from construct import (
+    Struct,
+    Enum,
+    Int8ub,
+    Int16ub,
+    Int32ub,
+    LazyBound,
+    BitStruct,
+    Padding,
+    Flag,
+    BitsInteger,
+)
+
+from rtm_con.common_items import DataItemAdapter
 
 """
 GB/T 32960.3-2016 chp7.2.3.1 table9

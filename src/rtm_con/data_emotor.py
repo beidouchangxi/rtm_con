@@ -1,4 +1,14 @@
-from rtm_con.common_items import *
+from construct import (
+    PrefixedArray,
+    LazyBound,
+    Struct,
+    Enum,
+    Int8ub,
+    Int16ub,
+    Int32ub,
+)
+
+from rtm_con.common_items import DataItemAdapter
 
 """
 GB/T 32960.3-2016 chp7.2.3.2 table10

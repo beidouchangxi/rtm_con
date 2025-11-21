@@ -1,4 +1,6 @@
-from rtm_con.common_items import *
+from construct import Prefixed, Int16ub, GreedyBytes
+
+from rtm_con.common_items import HexAdapter
 
 """
 GB/T 32960.3-2016 chp7.2.3.8 table19

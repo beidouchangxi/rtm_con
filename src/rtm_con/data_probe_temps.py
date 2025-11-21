@@ -1,4 +1,6 @@
-from rtm_con.common_items import *
+from construct import Struct, Int8ub, PrefixedArray, Int16ub
+
+from rtm_con.common_items import DataItemAdapter
 
 """
 GB/T 32960.3-2016 anxB.3.5.3.9 tableB.8

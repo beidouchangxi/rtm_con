@@ -1,4 +1,16 @@
-from rtm_con.common_items import *
+from construct import (
+    BitsSwapped,
+    ByteSwapped,
+    BitStruct,
+    Flag,
+    Padding,
+    Struct,
+    Int8ub,
+    PrefixedArray,
+    Enum,
+)
+
+from rtm_con.common_items import HexAdapter
 
 """
 GB/T 32960.3-2016 chp7.2.3.7 table18

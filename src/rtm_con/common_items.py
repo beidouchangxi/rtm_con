@@ -1,17 +1,13 @@
 from datetime import datetime, timezone, timedelta
 
 from construct import (
-    Container, ListContainer,
-    Lazy, LazyBound, Peek, Adapter,
-    BitsSwapped, ByteSwapped,
-    Error, Probe, this,
-    Switch, RepeatUntil, IfThenElse, GreedyRange,
-    Bytes, GreedyBytes, Hex,
-    BitStruct, Flag, BitsInteger, Padding,
-    Struct, Const, Enum, Prefixed, Array, PrefixedArray,
-    PaddedString,
-    Int8ub, Int16ub, Int32ub,
-    Checksum, Tell,
+    Adapter,
+    this,
+    Bytes,
+    Struct,
+    Enum,
+    Int8ub,
+    Int16ub,
 )
 
 """
@@ -92,6 +88,15 @@ class HexAdapter(Adapter):
 GB/T 32960.3-2016 chp6.2 table2
 GB/T 32960.3-2025 chp6.2 table2
 """
+rtm_ver = Enum(Int16ub,
+    protocol_2016=0x2323,
+    protocol_2025=0x2424,
+    )
+
+"""
+GB/T 32960.3-2016 chp6.2 table2
+GB/T 32960.3-2025 chp6.2 table2
+"""
 enc_algos = Enum(Int8ub,
     uncrypted=0x01,
     rsa=0x02,
@@ -102,6 +107,57 @@ enc_algos = Enum(Int8ub,
     # end of newly defined in 2025 protocol
     abnormal=0xfe,
     invalid=0xff,
+)
+
+"""
+GB/T 32960.3-2016 chp6.3.1 table3
+GB/T 32960.3-2016 anxB.3.3.1 tableB.2
+GB/T 32960.3-2025 chp6.3.1 table3
+GB/T 32960.3-2025 anxB.3.3.1 tableB.2
+"""
+msg_types = Enum(Int8ub, 
+    login=0x01,
+    realtime=0x02,
+    supplimentary=0x03,
+    logout=0x04,
+    plt_login=0x05,
+    plt_logout=0x06,
+    heartbeat=0x07,
+    time_sync=0x08,
+    # start of newly defined in 2025 protocol
+    activation=0x09,
+    activation_response=0x0a,
+    payload_key_sync=0x0b,
+    # end of newly defined in 2025 protocol
+    get=0x80,
+    set=0x81,
+    control=0x82,
+    # GB/T 32960.3-2016 chp6.3.1 table3
+        # 0x09~0x7f uplink reserve
+        # 0x83~0xbf downlink reserve
+        # 0xc0~0xfe platform reserve
+    # GB/T 32960.3-2025 chp6.3.1 table3
+        # 0x0c~0x7f uplink reserve
+        # 0x80~0x82 client reserve
+        # 0x83~0xbf downlink reserve
+        # 0xc0~0xfe platform reserve
+)
+
+"""
+GB/T 32960.3-2016 chp6.3.2 table4
+GB/T 32960.3-2025 chp6.3.2 table4
+"""
+ack_flags = Enum(Int8ub,
+    ok=0x01,
+    nok=0x02,
+    vin_duplicate=0x03,
+    vin_unkown=0x04,
+    # start of newly defined in 2025 protocol
+    signature_invalid=0x05,
+    structure_invalid=0x06,
+    decryption_failed=0x07,
+    # end of newly defined in 2025 protocol
+    command=0xfe,
 )
 
 """

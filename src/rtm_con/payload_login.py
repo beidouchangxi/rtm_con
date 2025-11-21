@@ -1,4 +1,13 @@
-from rtm_con.common_items import *
+from construct import (
+    Struct,
+    Int16ub,
+    PaddedString,
+    Int8ub,
+    Array,
+    this,
+)
+
+from rtm_con.common_items import RtmTs, enc_algos
 
 """
 GB/T 32960.3-2016 chp7.1 table6
