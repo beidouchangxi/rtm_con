@@ -3,45 +3,46 @@ import os
 
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.dimensions import ColumnDimension
 
 from rtm_con.msg_flatten import flat_msg
 from rtm_con.common_items import DataItem
 
 class MsgExcel:
-    msg_key = 'Msg'
-    logtime_key = 'LogTime'
-    prefixed_headers = [logtime_key, 'timestamp', msg_key]
-    preset_formats = {
+    msg_key: str = 'Msg'
+    logtime_key: str = 'LogTime'
+    prefixed_headers: list = [logtime_key, 'timestamp', msg_key]
+    preset_formats: dict[str, str] = {
         logtime_key: 'yyyy-mm-dd hh:mm:ss.000',
         'timestamp': 'yyyy-mm-dd hh:mm:ss',
     }
-    frozen_position = 'C2'  # Freeze first row and first two columns
-    int_format = '0'
-    float_format = '0.000'
+    frozen_position: str = 'C2'  # Freeze first row and first two columns
+    int_format: str = '0'
+    float_format: str = '0.000'
     def __init__(self):
         self.wb = Workbook()
         self.ws = self.wb.active
         self.ws.title = "Logs"
-        self.headers = []
-        self.headerpaths = {}
+        self.headers: list[str] = []
+        self.headerpaths: dict[str, tuple[str, ...]] = {}
         self._update_headers(self.prefixed_headers)  # Predefine some common headers
-        self.current_row = 2 # as the first row for headers
+        self.current_row: int = 2 # as the first row for headers
     
-    def write_line(self, line_dict: flat_msg, *, pathdict: dict = {}):
+    def write_line(self, line_dict: flat_msg, *, pathdict: dict = {}) -> None:
         self._update_headers(line_dict.keys(), pathdict=pathdict)
-        self._write_line(line_dict)
+        return self._write_line(line_dict)
     
-    def save(self, path: str):
+    def save(self, path: str) -> None:
         self._presave_formatting()
-        self.wb.save(path)
+        return self.wb.save(path)
     
-    def get_column(self, col_name: str):
+    def get_column(self, col_name: str) -> ColumnDimension | None:
         if col_name in self.headers:
             col_letter = get_column_letter(self.headers.index(col_name) + 1)
             return self.ws.column_dimensions[col_letter]
         return None
     
-    def _update_headers(self, new_headers: list, *, pathdict: dict = {}):
+    def _update_headers(self, new_headers: list, *, pathdict: dict = {}) -> None:
         for key in new_headers:
             if key not in self.headers:
                 self.headers.append(key)
@@ -50,7 +51,7 @@ class MsgExcel:
                 if pathdict:
                     self.headerpaths.update(pathdict)
 
-    def _write_line(self, line_dict: dict):
+    def _write_line(self, line_dict: dict[str, str]) -> None:
         for col_name, raw_value in line_dict.items():
             col_index = self.headers.index(col_name) + 1
             value = self.safe_write_value(raw_value)
