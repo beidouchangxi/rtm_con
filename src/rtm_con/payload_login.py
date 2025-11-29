@@ -7,13 +7,13 @@ from construct import (
     this,
 )
 
-from rtm_con.common_items import RtmTs, enc_algos
+from rtm_con.common_items import rtm_ts, enc_algos
 
 """
 GB/T 32960.3-2016 chp7.1 table6
 """
 login_2016 = Struct(
-    "timestamp" / RtmTs,
+    "timestamp" / rtm_ts,
     "session_id" / Int16ub,
     "iccid" / PaddedString(20, "ascii"),
     "bms_total" / Int8ub,
@@ -28,7 +28,7 @@ login_2016 = Struct(
 GB/T 32960.3-2025 chp7.1 table6
 """
 login_2025 = Struct(
-    "timestamp" / RtmTs,
+    "timestamp" / rtm_ts,
     "session_id" / Int16ub,
     "iccid" / PaddedString(20, "ascii"),
     "bms_total" / Int8ub,
@@ -47,7 +47,7 @@ GB/T 32960.3-2016 chp7.4 table21
 GB/T 32960.3-2025 chp7.4 table29
 """
 plt_login_2016 = plt_login_2025 = Struct(
-    "timestamp" / RtmTs,
+    "timestamp" / rtm_ts,
     "session_id" / Int16ub,
     "username" / PaddedString(12, "ascii"),
     "password" / PaddedString(20, "ascii"),

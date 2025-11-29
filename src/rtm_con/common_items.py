@@ -179,7 +179,7 @@ class RtmTsAdapter(Adapter):
         ts_obj_bj = ts_obj_local.astimezone(BEIJING_TZ)
         return bytes((ts_obj_bj.year%100, ts_obj_bj.month, ts_obj_bj.day, ts_obj_bj.hour, ts_obj_bj.minute, ts_obj_bj.second))
 
-RtmTs = RtmTsAdapter()
+rtm_ts = RtmTsAdapter()
 
 """
 GB/T 32960.3-2025 chp7.2.2 table8

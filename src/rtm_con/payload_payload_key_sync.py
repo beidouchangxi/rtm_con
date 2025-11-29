@@ -1,6 +1,6 @@
 from construct import Struct, this, Int16ub
 
-from rtm_con.common_items import enc_algos, HexAdapter, RtmTs
+from rtm_con.common_items import enc_algos, HexAdapter, rtm_ts
 
 """
 GB/T 32960.3-2025 chp7.6 table31
@@ -9,6 +9,6 @@ payload_key_sync_2025 = Struct(
     "payload_enc" / enc_algos,
     "payload_key_len" / Int16ub,
     "payload_key" / HexAdapter(this.payload_key_len),
-    "key_starttime" / RtmTs,
-    "key_endtime" / RtmTs,
+    "key_starttime" / rtm_ts,
+    "key_endtime" / rtm_ts,
 )

@@ -16,7 +16,7 @@ from construct import (
     this,
 )
 
-from rtm_con.common_items import enc_algos, RtmTs, rtm_ver, ack_flags, msg_types
+from rtm_con.common_items import enc_algos, rtm_ts, rtm_ver, ack_flags, msg_types
 from rtm_con.payload_login import login_2016, plt_login_2016, login_2025, plt_login_2025
 from rtm_con.payload_logout import logout_2016, plt_logout_2016, logout_2025, plt_logout_2025
 from rtm_con.payload_data import data_2016, data_2025
@@ -78,5 +78,5 @@ payload_mapping = Switch(
         (rtm_ver.protocol_2025, ack_flags.command, msg_types.payload_key_sync): payload_key_sync_2025,
     },
     # Normally the ack message contains only timestamp
-    default=IfThenElse(this.ack!=ack_flags.command, Struct("timestamp"/RtmTs), GreedyBytes),
+    default=IfThenElse(this.ack!=ack_flags.command, Struct("timestamp"/rtm_ts), GreedyBytes),
 )
