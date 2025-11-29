@@ -10,6 +10,14 @@ from construct import (
     Int16ub,
 )
 
+'''
+A dict that returns the key itself when key is missing
+Used in Switch to handle the switch in the function
+'''
+class GoThoughDict(dict):
+    def __missing__(self, key):
+        return key
+
 """
 Handle Numbers with factor, offset and unit
 """
