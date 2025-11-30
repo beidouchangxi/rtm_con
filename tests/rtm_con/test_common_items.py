@@ -11,6 +11,12 @@ DATAITEM_CAESES = (
     (100, "kW", None)
 )
 
+def test_GoThoughDict():
+    gd = rtm_common.GoThoughDict()
+    assert 1 in gd
+    assert 1 == gd.get(1)
+    assert gd[1]==1
+
 @pytest.mark.parametrize("value,unit,valid,expected", [
     case + (expected,) for case, expected in zip(DATAITEM_CAESES, (
         "DataItem(100, kW, True)",

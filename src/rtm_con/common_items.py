@@ -17,6 +17,10 @@ Used in Switch to handle the switch in the function
 class GoThoughDict(dict):
     def __missing__(self, key):
         return key
+    def __contains__(self, key):
+        return True
+    def get(self, key, default=None):
+        return key
 
 """
 Handle Numbers with factor, offset and unit
