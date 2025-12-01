@@ -2,7 +2,8 @@ import pytest
 
 mf = pytest.importorskip("rtm_con.msg_format")
 
-def test_rtmt_msg_login():
+@pytest.mark.parametrize("msg_con", (mf.rtm_msg, mf.rtm_msg_checked))
+def test_rtmt_msg_login(msg_con):
     msg_hexes = (
         '242401fe484155563442474e365335303032323139010036190a1b140202000c3839383630393234373930303233313636363036010130524a50454130304841553041414631333130303139353596',
         '242401fe484155563442474e365335303032323139010067190a1b140202000c383938363039323437393030323331363636303602010230524a50454130304841553041414631333130303139353530524a50454130304841553041414631333130303139353630524a504541303048415530414146313331303031393537c7',
@@ -15,7 +16,7 @@ def test_rtmt_msg_login():
     )
     for msg_hex, pack_sn in zip(msg_hexes, pack_sns):
         b = bytes.fromhex(msg_hex)
-        msg = mf.rtm_msg.parse(b)
+        msg = msg_con.parse(b)
         assert msg.msg_type == mf.msg_types.login
         assert msg.ack == mf.ack_flags.command
         assert msg.vin == 'HAUV4BGN6S5002219'
