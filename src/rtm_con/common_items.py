@@ -10,17 +10,7 @@ from construct import (
     Int16ub,
 )
 
-'''
-A dict that returns the key itself when key is missing
-Used in Switch to handle the switch in the function
-'''
-class GoThoughDict(dict):
-    def __missing__(self, key):
-        return key
-    def __contains__(self, key):
-        return True
-    def get(self, key, default=None):
-        return key
+from rtm_con.utilities import HexAdapter
 
 """
 Handle Numbers with factor, offset and unit
@@ -82,19 +72,6 @@ class DataItemAdapter(Adapter):
             phy_value = phy_value.value
         raw_value = (phy_value-self.offset)/self.factor
         return int(round(raw_value))
-
-class HexAdapter(Adapter):
-    def __init__(self, length=None, *, con=None):
-        if con is not None:
-            super().__init__(con)
-        else:
-            super().__init__(Bytes(length))
-        
-    def _decode(self, raw_value, context, path):
-        return raw_value.hex()
-    
-    def _encode(self, phy_value, context, path):
-        return bytes.fromhex(phy_value)
 
 """
 GB/T 32960.3-2016 chp6.2 table2
