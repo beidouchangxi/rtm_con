@@ -28,8 +28,8 @@ def test_DataItem_repr(value,unit,valid,expected):
     case + (expected,) for case, expected in zip(DATAITEM_CAESES, (
         "100 kW",
         "100.12 kW",
-        "Abnormal",
-        "Invalid",
+        "100 Abnormal",
+        "100 Invalid",
     ))
 ])
 def test_DataItem_str(value,unit,valid,expected):

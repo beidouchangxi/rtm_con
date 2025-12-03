@@ -16,6 +16,8 @@ from rtm_con.utilities import HexAdapter
 Handle Numbers with factor, offset and unit
 """
 class DataItem(object):
+    text_invalid = "Invalid"
+    text_abnormal = "Abnormal"
     def __init__(self, value, unit, validity):
         self.value = value
         self.unit = unit
@@ -30,9 +32,9 @@ class DataItem(object):
             else:
                 return "%s" % (self.value)
         elif self.valid==None:
-            return "Invalid"
+            return f"{self.value} {self.text_invalid}"
         else:
-            return "Abnormal"
+            return f"{self.value} {self.text_abnormal}"
     
     def __int__(self):
         return int(self.value)
@@ -61,7 +63,7 @@ class DataItemAdapter(Adapter):
         self.abnormal_value = 2**(self.sizeof()*8)-2
         self.invalid_value = 2**(self.sizeof()*8)-1
     
-    def _decode(self, raw_value, context, path):
+    def _decode(self, raw_value: int, context, path):
         validity = True
         if self.validation:
             if raw_value==self.abnormal_value:
@@ -70,9 +72,15 @@ class DataItemAdapter(Adapter):
                 validity = None
         return DataItem(raw_value*self.factor + self.offset, self.unit, validity)
     
-    def _encode(self, phy_value, context, path):
+    def _encode(self, phy_value: DataItem|int|float|str, context, path):
         if isinstance(phy_value, DataItem):
             phy_value = phy_value.value
+        elif isinstance(phy_value, str):
+            value_txt = phy_value.split(" ")[0]
+            if "." in value_txt:
+                phy_value = float(value_txt)
+            else:
+                phy_value = int(value_txt)
         raw_value = (phy_value-self.offset)/self.factor
         return int(round(raw_value))
 
