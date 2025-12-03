@@ -44,9 +44,12 @@ class DataItem(object):
         return bool(self.value)
     
     def __eq__(self, other):
-        if isinstance(other, type):
+        if isinstance(other, type(self)):
             return self.value == other.value and self.unit == other.unit and self.valid == other.valid
-        return self.value == other
+        elif isinstance(other, (int, float)):
+            return self.value == other
+        else:
+            return type(other)(self) == other
 
 class DataItemAdapter(Adapter):
     def __init__(self, subcon, unit, factor=1, offset=0, *, validation=True):
