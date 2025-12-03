@@ -71,3 +71,4 @@ for msg in test_msgs:
     for k,v in flat_dict.items():
         print(f"{k:<50}{v}")
         print(f"{"":<50}{flat_dict.pathdict[k]}")
+    input("press enter to see next message(if any)...")
