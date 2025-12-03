@@ -40,6 +40,8 @@ def con_to_pyobj(data_con):
         for py_type in py_types:
             if isinstance(data_con, py_type):
                 return py_type(data_con)
+            elif isinstance(data_con, datetime):
+                return data_con
         else:
             return str(data_con)
     py_obj = convert(data_con)
