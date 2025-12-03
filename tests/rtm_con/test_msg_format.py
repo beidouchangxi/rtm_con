@@ -23,7 +23,7 @@ def check_data(test_samples):
             b = bytes.fromhex(msg_hex)
             msg = msg_con.parse(b)
             compare_container(msg, target)
-            # assert msg_con.build(target).hex() == msg_hex
+            assert msg_con.build(target).hex() == msg_hex
 
 def test_rtmt_msg_login():
     check_data((
@@ -77,7 +77,7 @@ def test_rtmt_msg_login():
 
 def test_rtmt_msg_whole_vehicle_data():
     check_data((
-        ("242402fe484155563442474e365335303032323139010026190a1b14020201ffffffffffffffffffffffffffffffffffffff010003aabbcc0004aabbccddcf",
+        ("242402fe484155563442474e365335303032323139010026190a1b14020201ffffffffffffffffffffffffffffffbfffffff010003aabbcc0004aabbccdd8f",
             {'starter': 'protocol_2025',
             'msg_type': 'realtime',
             'ack': 'command',
@@ -106,9 +106,9 @@ def test_rtmt_msg_whole_vehicle_data():
                                 'r_value': 'aabbcc',
                                 's_len': 4,
                                 's_value': 'aabbccdd'}},
-            'checksum': 207}
+            'checksum': 143}
         ),
-        ("232302fe484155563442474e36533530303232313901001b190a1b14020201ffffffffffffffffffffffffffffffffffffffffd6",
+        ("232302fe484155563442474e36533530303232313901001b190a1b14020201ffffffffffffffffffffffffffffff3fffffffff16",
             {'starter': 'protocol_2016',
             'msg_type': 'realtime',
             'ack': 'command',
@@ -133,7 +133,7 @@ def test_rtmt_msg_whole_vehicle_data():
                                                                                 'kΩ',
                                                         'accelerator_padel': '255 invalid',
                                                         'brake_padel': '255 invalid'}}]},
-            'checksum': 214}
+            'checksum': 22}
         ),
     ))
 

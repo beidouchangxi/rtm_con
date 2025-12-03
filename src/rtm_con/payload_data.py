@@ -89,7 +89,7 @@ data_item_2025 = Struct(
         # For 2025 protocol, as there are signature_starter and signature at the end
         # For unknown data type, try to read until 0xff, this will generate some single byte data items (as _peek_byte is hidden)
         default=RepeatUntil(
-            lambda obj, lst, ctx: (lst and lst[-1]._peek_byte==0xff),
+            lambda obj, lst, ctx: (lst and lst[-1]._peek_byte==0xff) or not hasattr(lst[-1], '_peek_byte'),
             Struct(
                 "data_byte" / Int8ub,
                 "_peek_byte" / Peek(Int8ub),
@@ -100,6 +100,7 @@ data_item_2025 = Struct(
 )
 
 data_items_2025 = RepeatUntil(
-    lambda obj, lst, ctx: (lst and lst[-1]._peek_type==0xff),
+    # the _peek_type doesn't has to be provided when buiding the con
+    lambda obj, lst, ctx: obj._peek_type==0xff if ctx._parsing else len(lst)==len(ctx.data_list),
     data_item_2025,
 )
