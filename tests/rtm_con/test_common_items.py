@@ -7,13 +7,15 @@ rtm_common = pytest.importorskip("rtm_con.common_items")
 
 DATAITEM_CAESES = (
     (100, "kW", True),
+    (100.12, "kW", True),
     (100, "kW", False),
-    (100, "kW", None)
+    (100, "kW", None),
 )
 
 @pytest.mark.parametrize("value,unit,valid,expected", [
     case + (expected,) for case, expected in zip(DATAITEM_CAESES, (
         "DataItem(100, kW, True)",
+        "DataItem(100.12, kW, True)",
         "DataItem(100, kW, False)",
         "DataItem(100, kW, None)",
     ))
@@ -25,6 +27,7 @@ def test_DataItem_repr(value,unit,valid,expected):
 @pytest.mark.parametrize("value,unit,valid,expected", [
     case + (expected,) for case, expected in zip(DATAITEM_CAESES, (
         "100 kW",
+        "100.12 kW",
         "Abnormal",
         "Invalid",
     ))
@@ -35,9 +38,10 @@ def test_DataItem_str(value,unit,valid,expected):
 
 @pytest.mark.parametrize("value,unit,valid", DATAITEM_CAESES)
 def test_DataItem_eq(value,unit,valid):
-    item1 = rtm_common.DataItem(value, unit, valid)
-    item2 = rtm_common.DataItem(value, unit, valid)
-    assert item1 == item2
+    item = rtm_common.DataItem(value, unit, valid)
+    assert item == rtm_common.DataItem(value, unit, valid)
+    assert item == str(item)
+    assert item == item.value
 
 
 def test_DataItemAdapter():
