@@ -1,3 +1,4 @@
+import datetime
 import pytest
 
 mf = pytest.importorskip("rtm_con.msg_format")
@@ -9,19 +10,50 @@ def test_rtmt_msg_login(msg_con):
         '242401fe484155563442474e365335303032323139010067190a1b140202000c383938363039323437393030323331363636303602010230524a50454130304841553041414631333130303139353530524a50454130304841553041414631333130303139353630524a504541303048415530414146313331303031393537c7',
         '232301fe484155563442474e365335303032323139010066190a1b140202000c3839383630393234373930303233313636363036031830524a50454130304841553041414631333130303139353530524a50454130304841553041414631333130303139353630524a504541303048415530414146313331303031393537dc',
     )
-    pack_sns = (
-        [['0RJPEA00HAU0AAF131001955']],
-        [['0RJPEA00HAU0AAF131001955'], ['0RJPEA00HAU0AAF131001956', '0RJPEA00HAU0AAF131001957']],
-        ['0RJPEA00HAU0AAF131001955', '0RJPEA00HAU0AAF131001956', '0RJPEA00HAU0AAF131001957'],
+    targets = (
+        {'starter': 'protocol_2025',
+        'msg_type': 'login',
+        'ack': 'command',
+        'vin': 'HAUV4BGN6S5002219',
+        'enc': 'uncrypted',
+        'payload': {'timestamp': datetime.datetime(2025, 10, 27, 20, 2, 2),
+                    'session_id': 12,
+                    'iccid': '89860924790023166606',
+                    'bms_total': 1,
+                    'pack_per_bms': [1],
+                    'pack_sn_list': [['0RJPEA00HAU0AAF131001955']]},
+        'checksum': 150},
+        {'starter': 'protocol_2025',
+        'msg_type': 'login',
+        'ack': 'command',
+        'vin': 'HAUV4BGN6S5002219',
+        'enc': 'uncrypted',
+        'payload': {'timestamp': datetime.datetime(2025, 10, 27, 20, 2, 2),
+                    'session_id': 12,
+                    'iccid': '89860924790023166606',
+                    'bms_total': 2,
+                    'pack_per_bms': [1, 2],
+                    'pack_sn_list': [['0RJPEA00HAU0AAF131001955'],
+                                    ['0RJPEA00HAU0AAF131001956',
+                                    '0RJPEA00HAU0AAF131001957']]},
+        'checksum': 199},
+        {'starter': 'protocol_2016',
+        'msg_type': 'login',
+        'ack': 'command',
+        'vin': 'HAUV4BGN6S5002219',
+        'enc': 'uncrypted',
+        'payload': {'timestamp': datetime.datetime(2025, 10, 27, 20, 2, 2),
+                    'session_id': 12,
+                    'iccid': '89860924790023166606',
+                    'bms_total': 3,
+                    'pack_sn_len': 24,
+                    'pack_sn': ['0RJPEA00HAU0AAF131001955',
+                                '0RJPEA00HAU0AAF131001956',
+                                '0RJPEA00HAU0AAF131001957']},
+        'checksum': 220},
     )
-    for msg_hex, pack_sn in zip(msg_hexes, pack_sns):
+    for msg_hex, target in zip(msg_hexes, targets):
         b = bytes.fromhex(msg_hex)
         msg = msg_con.parse(b)
-        assert msg.msg_type == mf.msg_types.login
-        assert msg.ack == mf.ack_flags.command
-        assert msg.vin == 'HAUV4BGN6S5002219'
-        assert msg.payload.iccid == '89860924790023166606'
-        if hasattr(msg.payload, 'pack_sn_list'):
-            assert msg.payload.pack_sn_list == pack_sn
-        else:
-            assert msg.payload.pack_sn == pack_sn
+        for key, value in target.items():
+            assert msg[key] == value
