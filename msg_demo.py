@@ -1,4 +1,6 @@
+import pprint
 from rtm_con import rtm_msg, flat_msg
+from rtm_con.utilities import con_to_pyobj
 
 if __name__=='__main__':
     test_msgs = (
@@ -56,14 +58,16 @@ if __name__=='__main__':
         '232302fe484155563442474e365335303032323139010239190a0b13081201010301007a00000a1d1e81274355011e19990010020201013851794e343d1e4b272402023751894cdb401e4b26f7050000000000000000000601020fdf01140fdc01013a010a38070000000000000000000801011e81274300c00001c00fdd0fdf0fde0fde0fdd0fdd0fdd0fde0fdf0fde0fdd0fdd0fde0fde0fdd0fdd0fdd0fde0fdd0fdc0fdd0fdd0fdd0fde0fdd0fde0fde0fdd0fdf0fde0fde0fdd0fdd0fdd0fde0fdd0fde0fde0fdd0fde0fde0fdd0fdd0fdd0fde0fde0fde0fdd0fdd0fde0fdc0fdc0fdd0fdd0fde0fdd0fdd0fdc0fdd0fdd0fdd0fde0fdd0fde0fde0fde0fde0fdd0fde0fdd0fdd0fdd0fde0fde0fdf0fdf0fdf0fdf0fdd0fdd0fde0fdd0fdd0fde0fde0fdf0fde0fdd0fde0fdd0fdf0fde0fdf0fdf0fdf0fdf0fde0fde0fde0fde0fdd0fde0fdd0fde0fdd0fdd0fde0fdc0fdd0fdd0fdd0fde0fdc0fde0fdd0fdd0fdd0fde0fdd0fdd0fde0fdd0fde0fdc0fde0fde0fde0fde0fde0fdc0fdc0fdd0fdd0fdd0fdd0fde0fdc0fdd0fdd0fdc0fde0fde0fde0fdd0fdd0fdf0fde0fdf0fde0fde0fde0fdf0fde0fdf0fde0fdf0fde0fdf0fde0fdf0fdd0fdd0fde0fde0fde0fde0fdd0fde0fdd0fde0fdd0fdd0fde0fde0fdd0fdd0fde0fde0fdd0fdd0fdf0fde0fdd0fde0fde0fde0fde0fde0fde0fde0fdf0fde09010100303a393a3a393939393938393939393939393a3939393a3a3a3a393a3a39393939393939393839393939393939393a3a3a82001d000007ff0107fd01047a0107fd01000100010001000101010001069a015d',
         '242402fe484155563442474e365335303032323139010323190a1c0e2d2f010103010000000261061be275464b011f199902020103477d0000030d404a0203497d0000030d3b45050102000000000000000006000000000000000003000800020009002500090026000701011be2754600b40f750f780f760f790f770f760f790f7a0f7a0f7c0f7b0f7c0f7d0f7d0f7d0f7a0f7a0f7a0f7b0f7a0f7b0f7b0f7c0f7d0f7c0f7c0f7e0f7c0f7c0f7a0f7b0f7b0f7d0f7b0f7d0f7d0f7d0f7d0f7d0f7c0f7d0f7c0f7c0f7c0f7d0f790f780f760f7c0f7b0f7c0f7c0f7c0f7c0f7c0f770f7d0f780f7d0f7c0f7c0f7d0f7a0f7f0f7a0f7d0f7c0f7b0f7c0f7c0f7d0f7c0f7c0f7f0f7d0f7d0f7e0f7d0f7d0f7e0f7d0f7e0f7e0f7d0f7d0f7d0f7d0f7d0f7e0f7e0f7b0f7c0f7c0f7c0f7b0f7b0f780f7c0f7d0f7a0f7c0f7c0f7c0f7c0f7c0f7c0f7d0f7a0f7b0f7a0f7a0f7c0f7d0f7c0f7d0f7d0f7c0f7c0f7b0f7d0f790f7c0f7b0f7a0f7c0f7c0f7c0f7b0f7c0f7d0f7b0f7d0f7c0f7c0f7c0f790f7c0f7c0f7b0f7c0f7a0f7d0f7b0f7b0f7c0f7c0f7c0f7d0f7b0f7b0f7a0f7c0f7b0f7c0f7c0f7d0f7c0f7b0f7b0f7c0f7b0f7c0f7c0f7c0f7c0f7b0f7c0f7c0f7d0f7c0f7c0f7c0f7c0f7c0f7c0f7d0f7d0f7d0f7d0f7d0801010030464646454646464645444545464645444646464646464646464746464646464645444646444544434546454545454645820023000004190104230103dd0103f70100010001000100010101000105db0100ffffff0101ff0201002825085f0b2c0a294d47f6a8a738032f20bd7e5ede663a893c6c159f27e9154b7ac2d83e2fcbff21891237d29771e7c1f89552cc4eb82d480b291f5d253cc824908da0ee55ecd28a357fbb8013d7b371b4e0ac01061d34403871e645952c4d06d2fa25f374291af07f83e7b0e0d34fa29c5107866ca4561dfbcd2b72e04de52cfd5bbb6d66575189dc133db02cce0ef55ee2daab8d6de8d96e154e99f0cebeb0ecdc54e83aab694ae451e687b848735b0c6db777d63483c3c849fe2d2a39f895e6277670fd4ef586ea0cc65bfb6ace7a7be95ae695977f3377ea6b2187eae74ca021afc2646266af61a850695e441a4bbf6b807f1345897b38d86a8e90c1ed350000e7',
 )
-    
-    for msg in test_msgs:
-        print("\n\nTest for: ", msg)
-        print("for parsed message:")
-        msg_obj = rtm_msg.parse(bytes.fromhex(msg))
-        print(msg_obj)
-        print("\nfor flattened message:")
-        flat_dict = flat_msg(msg_obj)
-        for k,v in flat_dict.items():
-            print(f"{k:<50}{v}")
-            print(f"{"":<50}{flat_dict.pathdict[k]}")
+
+for msg in test_msgs:
+    print("\n\nTest for: ", msg)
+    print("for parsed message:")
+    msg_obj = rtm_msg.parse(bytes.fromhex(msg))
+    print(msg_obj)
+    input("press enter to see as python object...")
+    pprint.pp(con_to_pyobj(msg_obj))
+    input("press enter to see flattened message...")
+    flat_dict = flat_msg(msg_obj)
+    for k,v in flat_dict.items():
+        print(f"{k:<50}{v}")
+        print(f"{"":<50}{flat_dict.pathdict[k]}")

@@ -1,4 +1,5 @@
 from construct import Adapter, Bytes
+from datetime import datetime
 
 class GoThoughDict(dict):
     '''
@@ -28,3 +29,29 @@ class HexAdapter(Adapter):
     
     def _encode(self, phy_value, context, path):
         return bytes.fromhex(phy_value)
+
+def con_to_pyobj(data_con):
+    '''
+    Convert a construct parsed object to a pure python object (dict, list, int, str, etc.)
+    Mostly used for easier printing and debugging or create test cases
+    '''
+    def convert(data_con):
+        py_types = (int, float, str, bool, list, dict)
+        for py_type in py_types:
+            if isinstance(data_con, py_type):
+                return py_type(data_con)
+        else:
+            return str(data_con)
+    py_obj = convert(data_con)
+    if isinstance(py_obj, list):
+        result = []
+        for sub_con in py_obj:
+            result.append(con_to_pyobj(sub_con))
+        return result
+    elif isinstance(py_obj, dict):
+        result = {}
+        for key, sub_con in py_obj.items():
+            if not key.startswith('_'):
+                result[key] = con_to_pyobj(sub_con)
+        return result
+    return py_obj
