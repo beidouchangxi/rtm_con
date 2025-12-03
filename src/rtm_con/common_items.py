@@ -16,8 +16,8 @@ from rtm_con.utilities import HexAdapter
 Handle Numbers with factor, offset and unit
 """
 class DataItem(object):
-    text_invalid = "Invalid"
-    text_abnormal = "Abnormal"
+    text_invalid = "invalid"
+    text_abnormal = "abnormal"
     def __init__(self, value, unit, validity):
         self.value = value
         self.unit = unit
