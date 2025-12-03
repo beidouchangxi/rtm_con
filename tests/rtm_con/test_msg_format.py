@@ -57,3 +57,4 @@ def test_rtmt_msg_login(msg_con):
         msg = msg_con.parse(b)
         for key, value in target.items():
             assert msg[key] == value
+        assert msg_con.build(target).hex() == msg_hex
