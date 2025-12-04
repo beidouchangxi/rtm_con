@@ -1,5 +1,5 @@
 import pprint
-from rtm_con import rtm_msg, flat_msg
+from rtm_con import msg, flat_msg
 from rtm_con.utilities import con_to_pyobj
 
 if __name__=='__main__':
@@ -19,7 +19,7 @@ if __name__=='__main__':
 for msg in test_msgs:
     print("\n\nTest for: ", msg)
     input("press enter to see the parsed construct object...")
-    msg_obj = rtm_msg.parse(bytes.fromhex(msg))
+    msg_obj = msg.parse(bytes.fromhex(msg))
     print(msg_obj)
     input("press enter to see as python object...")
     pprint.pp(con_to_pyobj(msg_obj))

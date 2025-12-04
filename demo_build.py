@@ -1,5 +1,5 @@
 import datetime
-from rtm_con import rtm_msg_checked
+from rtm_con import msg_checked
 
 data = {'starter': 'protocol_2025',
             'msg_type': 'login',
@@ -14,5 +14,5 @@ data = {'starter': 'protocol_2025',
                         'pack_sn_list': [['0RJPEA00HAU0AAF131001955']]},
             'checksum': 150}
 
-msg = rtm_msg_checked.build(data)
+msg = msg_checked.build(data)
 print(msg.hex())

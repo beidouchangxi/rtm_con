@@ -16,7 +16,7 @@ def compare_container(parsed_data, py_obj):
         assert parsed_data == py_obj, f"Parsed data doesn't match expectation\nparsed:\n{parsed_data}\ntarget:\n{py_obj}"
 
 def check_data(test_samples, check_build=True):
-    for msg_con in (mf.rtm_msg, mf.rtm_msg_checked):
+    for msg_con in (mf.msg, mf.msg_checked):
         for msg_hex, target in test_samples:
             print(msg_hex)
             print(target)

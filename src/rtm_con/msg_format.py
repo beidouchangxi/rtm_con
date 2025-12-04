@@ -27,7 +27,7 @@ from rtm_con.payload_payload_key_sync import payload_key_sync_2025
 GB/T 32960.3-2016 chp6.2 table2
 GB/T 32960.3-2025 chp6.2 table2
 """
-rtm_msg = Struct( # Only parse the message without verifying the checksum
+msg = Struct( # Only parse the message without verifying the checksum
     "starter" / rtm_ver, 
     "msg_type" / msg_types,
     "ack" / ack_flags,
@@ -44,7 +44,7 @@ def check_body(ths): # Find the data to be checksummed
     ths._io.seek(ths._checking_end)
     return reduce(lambda x,y: x^y, body)
 
-rtm_msg_checked = Struct( # Calculate and verify automatically the checksum
+msg_checked = Struct( # Calculate and verify automatically the checksum
     "starter" / rtm_ver, 
     "_checking_start" / Tell,
     "msg_type" / msg_types,
