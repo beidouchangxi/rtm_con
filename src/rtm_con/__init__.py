@@ -15,3 +15,4 @@ from .common_items import (
 from .utilities import con_to_pyobj, HexAdapter, GoThoughDict
 from .payload_data import DATA_ITEM_MAPPING_2016, DATA_ITEM_MAPPING_2025
 from .data_oem_define import OemDefineData
+from .msg_to_gui import MessageAnalyzer
