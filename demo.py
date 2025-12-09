@@ -44,9 +44,13 @@ if __name__=='__main__':
     name = user_input if user_input else "demo"
     output_excel_file = f"{name}.xlsx"
     print(f'Preparing the excel file "{output_excel_file}"...')
-    excel_writer = MsgExcel()
+    excel_writer = MsgExcel(rawmsg_key="Msg", logtime_key="LogTime")
     for msg_hex in test_msgs:
-        line_dict = {"Msg":msg_hex, "LogTime":"Unkown"}
+        # Normally you will have another timestamp from the recorder besides the one from message
+        # But we fill it unkown here for the logtime
+        # You can also put whatever you like in the line_dict
+        # Which will be output as addtional columns
+        line_dict = {"Msg":msg_hex, "LogTime":"unkown"}
         msg_obj = msg.parse(bytes.fromhex(msg_hex))
         msg_dict = flat_msg(msg_obj)
         line_dict.update(msg_dict)

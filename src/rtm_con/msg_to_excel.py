@@ -9,17 +9,17 @@ from rtm_con.msg_flatten import flat_msg
 from rtm_con.common_items import DataItem
 
 class MsgExcel:
-    msg_key: str = 'Msg'
-    logtime_key: str = 'LogTime'
-    prefixed_headers: list = [logtime_key, 'timestamp', msg_key]
-    preset_formats: dict[str, str] = {
-        logtime_key: 'yyyy-mm-dd hh:mm:ss.000',
-        'timestamp': 'yyyy-mm-dd hh:mm:ss',
-    }
     frozen_position: str = 'C2'  # Freeze first row and first two columns
     int_format: str = '0'
     float_format: str = '0.000'
-    def __init__(self):
+    def __init__(self, *, rawmsg_key: str, logtime_key: str):
+        self.rawmsg_key = rawmsg_key
+        self.logtime_key = logtime_key
+        self.prefixed_headers: list = [logtime_key, 'timestamp', rawmsg_key]
+        self.preset_formats: dict[str, str] = {
+            logtime_key: 'yyyy-mm-dd hh:mm:ss.000',
+            'timestamp': 'yyyy-mm-dd hh:mm:ss',
+        }
         self.wb = Workbook()
         self.ws = self.wb.active
         self.ws.title = "Logs"
@@ -75,7 +75,7 @@ class MsgExcel:
 
     def _presave_formatting(self):
         # Raw message is too long, set fixed width
-        self.get_column(self.msg_key).width = len(self.msg_key) + 3
+        self.get_column(self.rawmsg_key).width = len(self.rawmsg_key) + 3
         # Frozen the first row and first two columns
         self.ws.freeze_panes = self.frozen_position
         # Set outline according to header paths
