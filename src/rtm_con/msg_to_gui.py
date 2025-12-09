@@ -16,9 +16,12 @@ from rtm_con.utilities import con_to_pyobj
 
 class MessageAnalyzer(tk.Tk):
     '''Hex and object viewer for a constuct container, mostly for rtm msg'''
-    def __init__(self, msg_con: Container, *, tittle:str="RTM Message analyzer"):
+    def __init__(self, msg_map:dict[str, Container], *, tittle:str="Message analyzer"):
         super().__init__()
-        self.msg_con = msg_con
+        self.msg_map = msg_map
+        
+        # Track selected protocol
+        self.selected_proto_key = tk.StringVar(value=next(iter(self.msg_map)))
 
         self.title(tittle)
         self.geometry("1200x900")
@@ -82,7 +85,16 @@ class MessageAnalyzer(tk.Tk):
         self.frame_message = ttk.LabelFrame(self.main_pane, text="Message (Binary)", padding=10)
         self.main_pane.add(self.frame_message, weight=2)
 
-        # Message Input (Top)
+        # Protocol Selection (Top of Message Area)
+        proto_frame = ttk.Frame(self.frame_message)
+        proto_frame.pack(side=tk.TOP, fill=tk.X, pady=(0, 5))
+        ttk.Label(proto_frame, text="Protocol:", font=("Arial", 9, "bold")).pack(side=tk.LEFT)
+        
+        for key in self.msg_map:
+            rb = ttk.Radiobutton(proto_frame, text=key, variable=self.selected_proto_key, value=key)
+            rb.pack(side=tk.LEFT, padx=10)
+
+        # Message Input (Below Protocol Selection)
         input_frame = ttk.Frame(self.frame_message)
         input_frame.pack(side=tk.TOP, fill=tk.X, pady=(0, 10))
         ttk.Label(input_frame, text="Input Hex String:").pack(side=tk.LEFT)
@@ -646,7 +658,11 @@ class MessageAnalyzer(tk.Tk):
         try:
             # 1. Parse raw bytes -> internal structure
             # Req: bytes 转 dict (用于展示部分)：msg.parse(binary_data)
-            internal_obj = self.msg_con.parse(self.current_bytes)
+            # Use selected protocol
+            selected_proto = self.selected_proto_key.get()
+            current_msg = self.msg_map[selected_proto]
+            
+            internal_obj = current_msg.parse(self.current_bytes)
             
             # 2. Path A: For Text Box
             # Req: bytes 转 dict (用于文本框)：con_to_pyobj(msg.parse(binary_data))
@@ -671,7 +687,10 @@ class MessageAnalyzer(tk.Tk):
 
         try:
             # Req: dict 转 bytes：msg.build(data_dict)
-            binary_data = self.msg_con.build(data_dict)
+            selected_proto = self.selected_proto_key.get()
+            current_msg = self.msg_map[selected_proto]
+            
+            binary_data = current_msg.build(data_dict)
             if not isinstance(binary_data, bytes):
                 raise TypeError(f"Build returned {type(binary_data)}, expected bytes")
 
@@ -721,6 +740,10 @@ class MessageAnalyzer(tk.Tk):
         self.clear_data()
 
 if __name__ == "__main__":
-    from rtm_con.msg_format import msg
-    app = MessageAnalyzer(msg)
+    from rtm_con.msg_format import msg, data_2016, data_2025
+    app = MessageAnalyzer({
+        "RTM message": msg,
+        "Payload 2016": data_2016,
+        "Payload 2025": data_2025,
+    })
     app.mainloop()
