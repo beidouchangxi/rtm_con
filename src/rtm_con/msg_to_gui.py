@@ -739,7 +739,7 @@ class MessageAnalyzer(tk.Tk):
         self.clear_message()
         self.clear_data()
 
-if __name__ == "__main__":
+def main():
     from rtm_con.msg_format import msg, data_2016, data_2025
     app = MessageAnalyzer({
         "RTM message": msg,
@@ -747,3 +747,6 @@ if __name__ == "__main__":
         "Payload 2025": data_2025,
     })
     app.mainloop()
+
+if __name__ == "__main__":
+    main()
