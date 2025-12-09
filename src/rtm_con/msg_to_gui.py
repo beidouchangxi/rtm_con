@@ -54,17 +54,25 @@ class MessageAnalyzer(tk.Tk):
         self.main_frame = ttk.Frame(self)
         self.main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-        # --- Part 4: Clear Buttons (Fixed at Bottom) ---
+        # --- Part 4: Bottom Buttons (Copy & Clear) ---
         # Pack first to reserve space at bottom
-        self.frame_clear_btns = ttk.Frame(self.main_frame, padding=10)
-        self.frame_clear_btns.pack(side=tk.BOTTOM, fill=tk.X)
+        self.frame_bottom_btns = ttk.Frame(self.main_frame, padding=10)
+        self.frame_bottom_btns.pack(side=tk.BOTTOM, fill=tk.X)
         
-        center_clear_frame = ttk.Frame(self.frame_clear_btns)
-        center_clear_frame.pack(anchor="center")
+        center_btn_frame = ttk.Frame(self.frame_bottom_btns)
+        center_btn_frame.pack(anchor="center")
 
-        ttk.Button(center_clear_frame, text="Clear Message", command=self.clear_message).pack(side=tk.LEFT, padx=5)
-        ttk.Button(center_clear_frame, text="Clear Data", command=self.clear_data).pack(side=tk.LEFT, padx=5)
-        ttk.Button(center_clear_frame, text="Clear All", command=self.clear_all).pack(side=tk.LEFT, padx=5)
+        # Copy Group
+        ttk.Button(center_btn_frame, text="Copy Message", command=self.copy_full_message).pack(side=tk.LEFT, padx=5)
+        ttk.Button(center_btn_frame, text="Copy Data", command=self.copy_full_data).pack(side=tk.LEFT, padx=5)
+
+        # Separator
+        ttk.Separator(center_btn_frame, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=15)
+
+        # Clear Group
+        ttk.Button(center_btn_frame, text="Clear Message", command=self.clear_message).pack(side=tk.LEFT, padx=5)
+        ttk.Button(center_btn_frame, text="Clear Data", command=self.clear_data).pack(side=tk.LEFT, padx=5)
+        ttk.Button(center_btn_frame, text="Clear All", command=self.clear_all).pack(side=tk.LEFT, padx=5)
 
         # We'll use a PanedWindow to separate Message Area and Data Area
         self.main_pane = ttk.PanedWindow(self.main_frame, orient=tk.VERTICAL)
@@ -238,7 +246,7 @@ class MessageAnalyzer(tk.Tk):
             # 2. Hide other main components
             self.main_pane.forget(self.frame_message)
             self.main_pane.forget(self.frame_controls)
-            self.frame_clear_btns.pack_forget()
+            self.frame_bottom_btns.pack_forget()
             
             # 3. Hide Tree Pane (Right side of data)
             self.data_split.forget(self.data_tree_container)
@@ -261,7 +269,7 @@ class MessageAnalyzer(tk.Tk):
             # 2. Hide other main components
             self.main_pane.forget(self.frame_message)
             self.main_pane.forget(self.frame_controls)
-            self.frame_clear_btns.pack_forget()
+            self.frame_bottom_btns.pack_forget()
             
             # 3. Hide Text Pane (Left side of data)
             self.data_split.forget(self.data_text_container)
@@ -280,7 +288,7 @@ class MessageAnalyzer(tk.Tk):
             # FIX: Force main pane to unpack so clear buttons can be packed 
             # to bottom FIRST, preserving layout order.
             self.main_pane.pack_forget()
-            self.frame_clear_btns.pack(side=tk.BOTTOM, fill=tk.X)
+            self.frame_bottom_btns.pack(side=tk.BOTTOM, fill=tk.X)
             self.main_pane.pack(fill=tk.BOTH, expand=True)
             
             # Restore Data Split
@@ -679,8 +687,23 @@ class MessageAnalyzer(tk.Tk):
             messagebox.showerror("Conversion Failed", f"Failed to convert Data to Message:\n{str(e)}")
 
     # ==========================================
-    # Logic: Clear Buttons
+    # Logic: Copy & Clear Buttons
     # ==========================================
+    def copy_full_message(self):
+        if not self.current_bytes:
+            return
+        self.clipboard_clear()
+        self.clipboard_append(self.current_bytes.hex().upper())
+        messagebox.showinfo("Copied", "Full Message Hex string copied to clipboard.")
+
+    def copy_full_data(self):
+        content = self.txt_data.get("1.0", tk.END).strip()
+        if not content:
+            return
+        self.clipboard_clear()
+        self.clipboard_append(content)
+        messagebox.showinfo("Copied", "Data text content copied to clipboard.")
+
     def clear_message(self):
         self.entry_hex.delete(0, tk.END)
         self.current_bytes = b""
