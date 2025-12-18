@@ -10,7 +10,7 @@ from rtm_con.payload_logout import logout_2016, plt_logout_2016, logout_2025, pl
 from rtm_con.payload_data import data_2016, data_2025
 from rtm_con.payload_activation import activation_2025, activation_response_2025
 from rtm_con.payload_payload_key_sync import payload_key_sync_2025
-from rtm_con.common_items import ack_flags, rtm_ts, rtm_ver
+from rtm_con.types_common import ack_flags, rtm_ts, rtm_ver
 
 """
 GB/T 32960.3-2016 chp6.3.1 table3

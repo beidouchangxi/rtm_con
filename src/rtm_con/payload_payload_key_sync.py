@@ -1,7 +1,7 @@
 from construct import Struct, this, Int16ub
 
 from rtm_con.utilities import HexAdapter
-from rtm_con.common_items import enc_algos, rtm_ts
+from rtm_con.types_common import enc_algos, rtm_ts
 from rtm_con.utilities import HexAdapter
 
 """

@@ -13,7 +13,7 @@ from construct import (
     this,
 )
 
-from rtm_con.common_items import enc_algos, rtm_ver, ack_flags
+from rtm_con.types_common import enc_algos, rtm_ver, ack_flags
 from rtm_con.types_msg import payload_mapping, msg_types
 from rtm_con.utilities import GoThoughDict
 

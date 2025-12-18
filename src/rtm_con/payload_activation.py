@@ -9,7 +9,7 @@ from construct import (
 )
 
 from rtm_con.utilities import HexAdapter
-from rtm_con.common_items import rtm_ts
+from rtm_con.types_common import rtm_ts
 from rtm_con.types_sig import payload_sig
 
 """

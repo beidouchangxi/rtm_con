@@ -7,7 +7,7 @@ from construct import (
     this,
 )
 
-from rtm_con.common_items import rtm_ts, enc_algos
+from rtm_con.types_common import rtm_ts, enc_algos
 
 """
 GB/T 32960.3-2016 chp7.1 table6

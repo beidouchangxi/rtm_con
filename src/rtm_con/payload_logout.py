@@ -1,6 +1,6 @@
 from construct import Struct, Int16ub
 
-from rtm_con.common_items import rtm_ts
+from rtm_con.types_common import rtm_ts
 
 """
 GB/T 32960.3-2016 chp7.3 table20
