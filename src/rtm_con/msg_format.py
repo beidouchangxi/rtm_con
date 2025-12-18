@@ -4,7 +4,6 @@ from construct import (
     Int16ub,
     Int8ub,
     Struct,
-    LazyBound,
     PaddedString,
     Prefixed,
     Checksum,
@@ -27,7 +26,7 @@ msg = Struct( # Only parse the message without verifying the checksum
     "ack" / ack_flags,
     "vin" / PaddedString(17, "ascii"),
     "enc" / enc_algos,
-    "payload" / Prefixed(Int16ub, LazyBound(lambda: Switch(payload_mapping, GoThoughDict()))),
+    "payload" / Prefixed(Int16ub, Switch(payload_mapping, GoThoughDict())),
     "checksum" / Int8ub,
 )
 
@@ -45,7 +44,7 @@ msg_checked = Struct( # Calculate and verify automatically the checksum
     "ack" / ack_flags,
     "vin" / PaddedString(17, "ascii"),
     "enc" / enc_algos,
-    "payload" / Prefixed(Int16ub, LazyBound(lambda: Switch(payload_mapping, GoThoughDict()))),
+    "payload" / Prefixed(Int16ub, Switch(payload_mapping, GoThoughDict())),
     "_checking_end" / Tell,
     "checksum" / Checksum(Int8ub, check_body, this),
 )
