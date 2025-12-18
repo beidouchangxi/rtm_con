@@ -11,7 +11,7 @@ sig_algos = Enum(Int8ub,
 """
 GB/T 32960.3-2025 chp7.2.2 table8
 """
-payload_sig = Struct(
+sig_con = Struct(
     "algo" / sig_algos,
     "r_len" / Int16ub,
     "r_value" / HexAdapter(this.r_len),

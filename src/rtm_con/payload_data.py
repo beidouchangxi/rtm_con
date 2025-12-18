@@ -12,7 +12,7 @@ from construct import (
 
 from rtm_con.utilities import HexAdapter
 from rtm_con.types_common import rtm_ts
-from rtm_con.types_sig import payload_sig
+from rtm_con.types_sig import sig_con
 from rtm_con.types_data import data_types_2016, data_types_2025, DATA_ITEM_MAPPING_2016, DATA_ITEM_MAPPING_2025
 
 """
@@ -41,7 +41,7 @@ data_2025 = Struct(
     "timestamp" / rtm_ts,
     "data_list" / LazyBound(lambda: data_items_2025),
     "sig_starter" / HexAdapter(con=Const(b'\xff')),
-    "sig" / payload_sig,
+    "sig" / sig_con,
 )
 
 data_item_2025 = Struct(

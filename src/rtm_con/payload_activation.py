@@ -10,7 +10,7 @@ from construct import (
 
 from rtm_con.utilities import HexAdapter
 from rtm_con.types_common import rtm_ts
-from rtm_con.types_sig import payload_sig
+from rtm_con.types_sig import sig_con
 
 """
 GB/T 32960.3-2025 anxB.3.5.5 tableB.3
@@ -23,7 +23,7 @@ activation_2025 = Struct(
     "pubkey" / HexAdapter(this.pubkey_len),
     "vin" / PaddedString(17, "ascii"),
     "_signing_end" / Tell,
-    "sig" / payload_sig,
+    "sig" / sig_con,
 )
 
 
