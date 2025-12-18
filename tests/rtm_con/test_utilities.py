@@ -1,6 +1,9 @@
 import pytest
 
-utilities = pytest.importorskip("rtm_con.utilities")
+try:
+    import rtm_con.utilities as utilities
+except:
+    utilities = None
 
 def test_GoThoughDict():
     gd = utilities.GoThoughDict()

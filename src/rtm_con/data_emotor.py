@@ -8,7 +8,7 @@ from construct import (
     Int32ub,
 )
 
-from rtm_con.common_items import DataItemAdapter
+from rtm_con.types_dataitem import DataItemAdapter
 
 """
 GB/T 32960.3-2016 chp7.2.3.2 table10

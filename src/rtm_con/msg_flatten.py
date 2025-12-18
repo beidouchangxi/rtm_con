@@ -1,6 +1,6 @@
 from construct import Container, ListContainer
 
-from rtm_con.common_items import data_types_2016, data_types_2025
+from rtm_con.types_data import data_types_2016, data_types_2025
 
 class flat_msg(dict):
     def __init__(self, msg_obj):

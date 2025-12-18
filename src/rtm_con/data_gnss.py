@@ -1,6 +1,6 @@
 from construct import BitStruct, Padding, BitsInteger, Enum, Flag, Struct, Int32ub, Int8ub
 
-from rtm_con.common_items import DataItemAdapter
+from rtm_con.types_dataitem import DataItemAdapter
 
 """
 GB/T 32960.3-2016 chp7.2.3.5 table15

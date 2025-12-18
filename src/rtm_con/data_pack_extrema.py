@@ -1,6 +1,6 @@
 from construct import Struct, Int8ub, Int16ub
 
-from rtm_con.common_items import DataItemAdapter
+from rtm_con.types_dataitem import DataItemAdapter
 
 """
 GB/T 32960.3-2016 chp7.2.3.6 table16

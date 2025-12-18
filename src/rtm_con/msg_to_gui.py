@@ -740,7 +740,8 @@ class MessageAnalyzer(tk.Tk):
         self.clear_data()
 
 def main():
-    from rtm_con.msg_format import msg, data_2016, data_2025
+    from rtm_con.payload_data import data_2016, data_2025
+    from rtm_con.msg_format import msg
     app = MessageAnalyzer({
         "RTM message": msg,
         "Payload 2016": data_2016,

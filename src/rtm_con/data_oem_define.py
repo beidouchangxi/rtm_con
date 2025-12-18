@@ -2,7 +2,7 @@ from functools import partial
 
 from construct import Prefixed, Int16ub, GreedyBytes
 
-from rtm_con.common_items import HexAdapter
+from rtm_con.utilities import HexAdapter
 
 """
 GB/T 32960.3-2016 chp7.2.3.8 table19

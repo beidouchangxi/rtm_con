@@ -1,6 +1,6 @@
 from construct import PrefixedArray, LazyBound, Struct, Int8ub, Int16ub
 
-from rtm_con.common_items import  DataItemAdapter
+from rtm_con.types_dataitem import  DataItemAdapter
 
 """
 GB/T 32960.3-2016 anxB.3.5.3.8 tableB.5

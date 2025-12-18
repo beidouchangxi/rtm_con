@@ -1,12 +1,11 @@
 from datetime import datetime
-import os
 
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.dimensions import ColumnDimension
 
 from rtm_con.msg_flatten import flat_msg
-from rtm_con.common_items import DataItem
+from rtm_con.types_dataitem import DataItem
 
 class MsgExcel:
     frozen_position: str = 'C2'  # Freeze first row and first two columns
