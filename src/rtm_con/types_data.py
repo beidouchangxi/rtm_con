@@ -115,8 +115,14 @@ data_item_2025 = Struct(
     "_peek_type" / Peek(Int8ub),
 )
 
-data_items_2025 = RepeatUntil(
+class MyRepeatUntil(RepeatUntil):
+    def _build(self, obj, stream, context, path):
+        """Put the length of obj into context"""
+        context["__data_items_2025_objlen"] = len(obj)
+        return super()._build(obj, stream, context, path)
+
+data_items_2025 = MyRepeatUntil(
     # the _peek_type doesn't has to be provided when buiding the con
-    lambda obj, lst, ctx: obj._peek_type==0xff if ctx._parsing else len(lst)==len(ctx.data_list),
+    lambda obj, lst, ctx: obj._peek_type==0xff if ctx._parsing else len(lst)==ctx.__data_items_2025_objlen,
     data_item_2025,
 )

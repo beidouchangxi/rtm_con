@@ -57,8 +57,7 @@ class Signature(Construct):
         for name in self.signed_items:
             objdata = context[name]
             con = context._subcons[name]
-            # TobeDone: improve data_items_2025
-            data += con.build(objdata, **{name:objdata})
+            data += con.build(objdata)
         return data
 
     def _parse(self, stream, context, path):
