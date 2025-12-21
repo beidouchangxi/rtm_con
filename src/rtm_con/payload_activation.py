@@ -19,7 +19,7 @@ activation_2025 = Struct(
     "sec_chip_id" / PaddedString(16, "ascii"),
     "pubkey" / Prefixed(Int16ub, HexAdapter()),
     "vin" / PaddedString(17, "ascii"),
-    "sig" / Signature("timestamp", "sec_chip_id", "pubkey_len", "pubkey", "vin"),
+    "sig" / Signature("timestamp", "sec_chip_id", "pubkey", "vin"),
 )
 
 
