@@ -68,13 +68,19 @@ if __name__=='__main__':
     for msg_hex in test_msgs:
         print("Test for: ", msg_hex)
         input("\npress enter to see the parsed construct object...")
-        msg_obj = msg.parse(bytes.fromhex(msg_hex), public_key=pubkey)
+        if pubkey:
+            msg_obj = msg.check(bytes.fromhex(msg_hex), pubkey)
+        else:
+            msg_obj = msg.parse(bytes.fromhex(msg_hex))
         print(msg_obj)
         input("\npress enter to see as python object...")
         msg_py_obj = con_to_pyobj(msg_obj)
         pprint.pp(msg_py_obj)
         input("\npress enter to see the re-built msg hexsting...")
-        msg_hex_new = msg.build(msg_py_obj, private_key=prikey)
+        if prikey:
+            msg_hex_new = msg.sign(msg_py_obj, prikey)
+        else:
+            msg_hex_new = msg.build(msg_py_obj)
         print(msg_hex_new.hex())
         input("\npress enter to see flattened message...")
         flat_dict = flat_msg(msg_obj)

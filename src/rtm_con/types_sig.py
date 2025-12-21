@@ -104,3 +104,22 @@ class Signature(Construct):
                 raise ValidationError(f'The algorighm of private_key is not supported')
         # No private key, skip signing part
         return self.base_con._build(obj, stream, context, path)
+
+class StructWithKey(Struct):
+    """
+    Works to ensure when pubkey or prikey is passed in with a wrong way, it fails fast
+    You can still use msg.build(..., private_key=...) or msg.parse(..., public_key=...)
+    But it will not raise any exception nor report any error if the keyword is mis-spelled or the key is None
+    Check types_sig.py for the detailed signature stuffs
+    """
+    def check(self, byt_data, pubkey):
+        """A more safer way to pass-in the pubkey for signature checking"""
+        if pubkey==None:
+            raise TypeError("pubkey is None!")
+        return self.parse(byt_data, public_key=pubkey)
+
+    def sign(self, obj_data, prikey):
+        """A more safer way to pass-in the prikey for signature generation"""
+        if prikey==None:
+            raise TypeError("prikey is None!")
+        return self.build(obj_data, private=prikey)
