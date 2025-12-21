@@ -1,5 +1,46 @@
 import datetime
 
+prikey_pem_rsa2048 = (
+'''-----BEGIN PRIVATE KEY-----
+MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC1emb2Nbx8Hufl
+XrKQ8NdayVwtC5M+j/4YH349Xn9+1eny54WK4ZbwvqG9/4bMxIy8iOKXyOLuIjAH
+AUAlzkybRDMYMEnVOzy8FEs8jhHddq9hr2QRKJ8PI1Jsfwufe8eO0kR18HRRkLMU
+if2vzM742OPsjliK61rLC8lP5QwZqEF7GBsl1x03KwQK/1w3yZU7+ZNLHluxuH3I
+yqq7ln8n3tFRdNyH+P/AQxxaCK2UuYWtExdG7tpPr0zLqQYbWXDvPs5xv7rkv2MT
+KCYlw0DAbhyer2nAhAGYQ3vtnJ6kij/xRBFMQUKcTKt3577vUhtrA1bZIdrhz59r
+RF9GDoSLAgMBAAECggEAGhLkCCvgUNT/7GyWq0xvJJQZsj8fgLWfhEfCE38oQkjp
+vASXo0SWMzCwfGPiMjlrHwtrwvMR57TxwY/kb4ocZ5J85NTLRt+j8kHYLXMcDf2n
+ZRmV/wEfGUWx6fS27ssR+Oss+uT5UV7A3AqXcFK0yfwfgzVQc2UtPk8LNXdrLaRJ
+E+FiNGly1zXGr0b22w2R/KFoh7hs4yc/YJlMiOuUA3fyIz1cy4qKxvets9sghnTe
+PknbqR92LmBmiy6rXQUgfANGGC/RFB1HAHuFc/P0Dx6EgphkT4siUgOM9YgEDMBF
+iOpJsFbBtRjCtq7Z+76j7m58sg2FTZN+YCl32Bc6wQKBgQDZO9ZhYZm9aTD5bpzc
+HXw97azDML1CNrM1/w4ntLb6qBnFuutzltcerEC0EBgoumfgGfCjOORYuR86LIOi
+HVtAELdctP/RDtdaMMNrNVkrb4RhzU7Y0QD/GDwfjLKJm+tky+K0tAvIT3MqFsL4
+YfpXDU6iFWR9VxDKgDmmC1BL/wKBgQDV3RireKrMUfvWtT5yILTz2PleiUeGyW0t
+eXWvHpPpAtDa/5qXdnqqca+hLaRGK0zzknq0yhhx/JwefKOU1G/Le3ajqzBT3qaz
+CCuVU1bxWDzvNKR04Sv1T128s91sjrOskXvTfy8dUnAFosloFerOqxIloi8i8x/y
+ndU3xfg3dQKBgGiGYDrvKXh4GvaKALPxBA0QRaaN1yL7CvQaS4dTbw/gvrXjoNM3
+az75BxEdBWLjfoPYN29yOn1uZdYqARSKJ5QF9xSGiujeyUQ+XmlBfCxoNjyQ+zVc
+K6ySzqsnmeiYu4T+jZEBaQHzKKjB1wKIslocrw9SV83vjMbDN/nrS7GlAoGAXWaY
+NZsXjPBpOlYhlZpvLOgf0IfH8zfZNLkNCpQiKOuP53UmQOv/mpzYBV53liWnD+Fz
+Ma3piy61yCLLFl7JDGc5YzWKf7aHuzzgO/EP0Yul4RpukJUeq54j5Bvxok2Ybs+C
+8tVi8D1mqy9zIsAfsm7IGCOCzpK76yu/SQJu61kCgYAZTKkvJqfHSJUbQE20Rlr9
+eqI+EiJgY1F/EMBhWrfojjSGlJjaonRIms0t3b2Tr9FA98A5/GzDuhfiUzcTkedo
+VUwICyFybeU99Cqmc95gsSMmKQ1SVzMPL1l+cH4MYHF04C67yks3yv+SK7P6Gsc2
+m23OmYZ2O3iTJO9gYQtRDw==
+-----END PRIVATE KEY-----'''.encode("utf-8"))
+
+pubkey_pem_rsa2048 = (
+'''-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtXpm9jW8fB7n5V6ykPDX
+WslcLQuTPo/+GB9+PV5/ftXp8ueFiuGW8L6hvf+GzMSMvIjil8ji7iIwBwFAJc5M
+m0QzGDBJ1Ts8vBRLPI4R3XavYa9kESifDyNSbH8Ln3vHjtJEdfB0UZCzFIn9r8zO
++Njj7I5YiutaywvJT+UMGahBexgbJdcdNysECv9cN8mVO/mTSx5bsbh9yMqqu5Z/
+J97RUXTch/j/wEMcWgitlLmFrRMXRu7aT69My6kGG1lw7z7Ocb+65L9jEygmJcNA
+wG4cnq9pwIQBmEN77ZyepIo/8UQRTEFCnEyrd+e+71IbawNW2SHa4c+fa0RfRg6E
+iwIDAQAB
+-----END PUBLIC KEY-----'''.encode('utf-8'))
+
 message_and_data_samples = {
     "login2025 with one HVBSN": (
         '242401fe484155563442474e365335303032323139010036190a1b140202000c3839383630393234373930303233313636363036010130524a50454130304841553041414631333130303139353596',
@@ -82,9 +123,7 @@ message_and_data_samples = {
                                                                             'invalid'}}],
                     'sig_starter': 'ff',
                     'sig': {'algo': 'sm2',
-                            'r_len': 3,
                             'r_value': 'aabbcc',
-                            's_len': 4,
                             's_value': 'aabbccdd'}},
         'checksum': 143},
         True,
@@ -172,9 +211,7 @@ message_and_data_samples = {
                                                     'temp': '214 abnormal'}]}],
                     'sig_starter': 'ff',
                     'sig': {'algo': 'sm2',
-                            'r_len': 3,
                             'r_value': 'aabbcc',
-                            's_len': 4,
                             's_value': 'aabbccdd'}},
         'checksum': 193},
         True,
@@ -210,9 +247,7 @@ message_and_data_samples = {
                                                                     'invalid'}}],
                     'sig_starter': 'ff',
                     'sig': {'algo': 'sm2',
-                            'r_len': 3,
                             'r_value': 'aabbcc',
-                            's_len': 4,
                             's_value': 'aabbccdd'}},
         'checksum': 250},
         True,
@@ -257,9 +292,7 @@ message_and_data_samples = {
                                                                 'invalid'}}],
                     'sig_starter': 'ff',
                     'sig': {'algo': 'sm2',
-                            'r_len': 3,
                             'r_value': 'aabbcc',
-                            's_len': 4,
                             's_value': 'aabbccdd'}},
         'checksum': 11},
         True,
@@ -395,9 +428,7 @@ message_and_data_samples = {
                                                                             'level': 3}]}}],
                     'sig_starter': 'ff',
                     'sig': {'algo': 'sm2',
-                            'r_len': 3,
                             'r_value': 'aabbcc',
-                            's_len': 4,
                             's_value': 'aabbccdd'}},
         'checksum': 253},
         True,
@@ -459,9 +490,7 @@ message_and_data_samples = {
                                                                     'invalid']}]}],
                     'sig_starter': 'ff',
                     'sig': {'algo': 'sm2',
-                            'r_len': 3,
                             'r_value': 'aabbcc',
-                            's_len': 4,
                             's_value': 'aabbccdd'}},
         'checksum': 219},
         True,
@@ -509,9 +538,7 @@ message_and_data_samples = {
                                                                     'invalid']}]}],
                     'sig_starter': 'ff',
                     'sig': {'algo': 'sm2',
-                            'r_len': 3,
                             'r_value': 'aabbcc',
-                            's_len': 4,
                             's_value': 'aabbccdd'}},
         'checksum': 194},
         True,
@@ -543,9 +570,7 @@ message_and_data_samples = {
                                     'data_content': 'fefefefefefefefefefefefefefefefe'}],
                     'sig_starter': 'ff',
                     'sig': {'algo': 'sm2',
-                            'r_len': 3,
                             'r_value': 'aabbcc',
-                            's_len': 4,
                             's_value': 'aabbccdd'}},
         'checksum': 94},
         True,
@@ -668,13 +693,10 @@ message_and_data_samples = {
         'enc': 'uncrypted',
         'payload': {'timestamp': datetime.datetime(2025, 6, 23, 15, 6, 22),
                     'sec_chip_id': '1234567812345678',
-                    'pubkey_len': 259,
                     'pubkey': 'ce6f0a94cbece0c56ba8e4eda6dbf838d5374536b0b5e9b57db2abe2ace31abc8f9c2a72c8a71c2128e999c354733542b034a5fc521d7c2124bb3c7eff16c2f1161c11f7e38aebf17a69a2d68d23d78730b98b0d1c867076f44003786e35b89fda73130a48211959521cc613c9978f622f328383350bf334e4a7a80208981123d384d4f8685189240f8ebc56dfc4c0628a044466bc13c833dde1bea636147892069c6c294923e4c6c8aa64d0e981a0f8135d1c332ef9fdc7c3612b37decb5df6cc8e4040cf912b845456d169807b494805eeed7aec09f22b344f0ed029375f49903bd704515e319509aeacf3c50daaed3561c9a54879f13ff0790a499c96d3c1010001',
                     'vin': 'HGLH3ACF1PA714408',
                     'sig': {'algo': 'rsa',
-                            'r_len': 256,
                             'r_value': 'be3b4d48647b90fd359f5365b700850ff095c360470336505bfd7393454bd782719567968e021109f2d21ebf8aa4548020336dc21e6afdc07d4897cbc25b007c02e28c971d626acf4ed30d2197735480d5489967bd7bc336da1e9a6f12c3e9fdb60a1c00f237042f8f82e31a51307e97f77d4bfb50b5cbcd80c1711a5adb0d7e8be9650222e71273a3642fe65e93e437deaef46f257f389fdfac889333ca759ce7ec5027879c4d8bf872df84a2ed1cab4c7a2e92ccabde77b22dee19af32f371360f67b0310fbae66201c8f68e8d2e709f692951bca151a6ac509443fafcd565fda62b3b5d4d5b7350995699f7b1f39b60b4ef6791f6d8a75661bef055fe93c7',
-                            's_len': 0,
                             's_value': ''}},
         'checksum': 241},
         True,
@@ -864,9 +886,7 @@ message_and_data_samples = {
                                                                             'level': 3}]}}],
                     'sig_starter': 'ff',
                     'sig': {'algo': 'sm2',
-                            'r_len': 3,
                             'r_value': 'aabbcc',
-                            's_len': 4,
                             's_value': 'aabbccdd'}},
         'checksum': 133},
         True,
@@ -1241,9 +1261,7 @@ message_and_data_samples = {
                                                                     '29 ℃']}]}],
                     'sig_starter': 'ff',
                     'sig': {'algo': 'rsa',
-                            'r_len': 256,
                             'r_value': '2825085f0b2c0a294d47f6a8a738032f20bd7e5ede663a893c6c159f27e9154b7ac2d83e2fcbff21891237d29771e7c1f89552cc4eb82d480b291f5d253cc824908da0ee55ecd28a357fbb8013d7b371b4e0ac01061d34403871e645952c4d06d2fa25f374291af07f83e7b0e0d34fa29c5107866ca4561dfbcd2b72e04de52cfd5bbb6d66575189dc133db02cce0ef55ee2daab8d6de8d96e154e99f0cebeb0ecdc54e83aab694ae451e687b848735b0c6db777d63483c3c849fe2d2a39f895e6277670fd4ef586ea0cc65bfb6ace7a7be95ae695977f3377ea6b2187eae74ca021afc2646266af61a850695e441a4bbf6b807f1345897b38d86a8e90c1ed35',
-                            's_len': 0,
                             's_value': ''}},
         'checksum': 231},
         False,
@@ -1651,9 +1669,7 @@ message_and_data_samples = {
                                                     {'data_byte': 0}]}],
                     'sig_starter': 'ff',
                     'sig': {'algo': 'rsa',
-                            'r_len': 256,
                             'r_value': '2825085f0b2c0a294d47f6a8a738032f20bd7e5ede663a893c6c159f27e9154b7ac2d83e2fcbff21891237d29771e7c1f89552cc4eb82d480b291f5d253cc824908da0ee55ecd28a357fbb8013d7b371b4e0ac01061d34403871e645952c4d06d2fa25f374291af07f83e7b0e0d34fa29c5107866ca4561dfbcd2b72e04de52cfd5bbb6d66575189dc133db02cce0ef55ee2daab8d6de8d96e154e99f0cebeb0ecdc54e83aab694ae451e687b848735b0c6db777d63483c3c849fe2d2a39f895e6277670fd4ef586ea0cc65bfb6ace7a7be95ae695977f3377ea6b2187eae74ca021afc2646266af61a850695e441a4bbf6b807f1345897b38d86a8e90c1ed35',
-                            's_len': 0,
                             's_value': ''}},
         'checksum': 222},
         False
@@ -2385,9 +2401,7 @@ message_and_data_samples = {
                                     'data_content': '000004190104230103dd0103f70100010001000100010101000105db0100ffffff0101'}],
                     'sig_starter': 'ff',
                     'sig': {'algo': 'rsa',
-                            'r_len': 256,
                             'r_value': '2825085f0b2c0a294d47f6a8a738032f20bd7e5ede663a893c6c159f27e9154b7ac2d83e2fcbff21891237d29771e7c1f89552cc4eb82d480b291f5d253cc824908da0ee55ecd28a357fbb8013d7b371b4e0ac01061d34403871e645952c4d06d2fa25f374291af07f83e7b0e0d34fa29c5107866ca4561dfbcd2b72e04de52cfd5bbb6d66575189dc133db02cce0ef55ee2daab8d6de8d96e154e99f0cebeb0ecdc54e83aab694ae451e687b848735b0c6db777d63483c3c849fe2d2a39f895e6277670fd4ef586ea0cc65bfb6ace7a7be95ae695977f3377ea6b2187eae74ca021afc2646266af61a850695e441a4bbf6b807f1345897b38d86a8e90c1ed35',
-                            's_len': 0,
                             's_value': ''}},
         'checksum': 230},
         True,

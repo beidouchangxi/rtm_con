@@ -5,7 +5,7 @@ from construct import (
 
 from rtm_con.utilities import HexAdapter
 from rtm_con.types_common import rtm_ts
-from rtm_con.types_sig import sig_con
+from rtm_con.types_sig import Signature
 from rtm_con.types_data import data_items_2016, data_items_2025
 
 """
@@ -23,5 +23,5 @@ data_2025 = Struct(
     "timestamp" / rtm_ts,
     "data_list" / data_items_2025,
     "sig_starter" / HexAdapter(con=Const(b'\xff')),
-    "sig" / sig_con,
+    "sig" / Signature("timestamp", "data_list"),
 )

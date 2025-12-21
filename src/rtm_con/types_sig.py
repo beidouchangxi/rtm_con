@@ -1,20 +1,106 @@
-from construct import Struct, Enum, Int8ub, Int16ub, this
+from construct import (
+    Construct,
+    ValidationError,
+    Struct,
+    Int16ub,
+    Enum,
+    Prefixed,
+    GreedyBytes,
+    Int8ub)
+try:
+    # Import cryptography only if signature checking is needed
+    import cryptography
+except:
+    cryptography = None
 
 from rtm_con.utilities import HexAdapter
 
 sig_algos = Enum(Int8ub, 
-        sm2=1,
-        rsa=2,
-        ecc=3,
+    sm2=1,
+    rsa=2,
+    ecc=3,
 )
 
 """
 GB/T 32960.3-2025 chp7.2.2 table8
 """
+
 sig_con = Struct(
     "algo" / sig_algos,
-    "r_len" / Int16ub,
-    "r_value" / HexAdapter(this.r_len),
-    "s_len" / Int16ub,
-    "s_value" / HexAdapter(this.s_len),
+    "r_value" / Prefixed(Int16ub, HexAdapter(con=GreedyBytes)),
+    "s_value" / Prefixed(Int16ub, HexAdapter(con=GreedyBytes)),
 )
+
+# ==========================================
+# 1. Custom Signature Component
+# ==========================================
+class Signature(Construct):
+    def __init__(self, *signed_items):
+        super().__init__()
+        self.signed_items = signed_items
+        self.sig_len = 256 # 2048 bits
+        self.base_con = sig_con
+
+    @staticmethod
+    def _find_key_in_context(context, key):
+        """Recursively search for keys in nested Context."""
+        curr = context
+        while curr is not None:
+            if key in curr:
+                return curr[key]
+            # Construct stores the parent context in '_'
+            curr = curr.get("_")
+        return None
+
+    def _find_data_in_context(self, context):
+        data = b""
+        for name in self.signed_items:
+            objdata = context[name]
+            con = context._subcons[name]
+            # TobeDone: improve data_items_2025
+            data += con.build(objdata, **{name:objdata})
+        return data
+
+    def _parse(self, stream, context, path):
+        sig = self.base_con._parse(stream, context, path)
+        public_key = self._find_key_in_context(context, "public_key")
+        if public_key:
+            if cryptography is None:
+                raise ValidationError(f'If you need signature verification, install with extras "sig" or install cryptography manually')
+            elif sig.algo=="rsa":
+                # Verify signature only if public_key found in context
+                signature_bytes = bytes.fromhex(sig.r_value)
+                data_to_verify = self._find_data_in_context(context)
+                try:
+                    public_key.verify(
+                        signature_bytes,
+                        data_to_verify,
+                        cryptography.hazmat.primitives.asymmetric.padding.PKCS1v15(),
+                        cryptography.hazmat.primitives.hashes.SHA256()
+                    )
+                except cryptography.exceptions.InvalidSignature:
+                    raise ValidationError(f"RSA Signature verification failed at path {path}")
+        return sig
+
+    def _build(self, obj, stream, context, path):
+        private_key = self._find_key_in_context(context, "private_key")
+        if private_key:
+            # Auto generate signature only if private key is provided
+            if cryptography is None:
+                raise ValidationError(f'If you need signature generation, install with extras "sig" or install cryptography manually')
+            elif isinstance(private_key, cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey):
+                data_to_sign = self._find_data_in_context(context)
+                signature = private_key.sign(
+                    data_to_sign,
+                    cryptography.hazmat.primitives.asymmetric.padding.PKCS1v15(),
+                    cryptography.hazmat.primitives.hashes.SHA256()
+                )
+                build_res = self.base_con.build({
+                    "algo": "rsa",
+                    "r_value": signature.hex(),
+                    "s_value": "",
+                })
+                stream.write(build_res)
+                return build_res
+        # No private key or algorighm is not supported, skip signing part
+        return self.base_con._build(obj, stream, context, path)

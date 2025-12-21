@@ -20,6 +20,10 @@ test = [
     "pytest-cov"
 ]
 
+sig = [
+    "cryptography"
+]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
