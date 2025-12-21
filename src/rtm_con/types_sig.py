@@ -27,8 +27,8 @@ GB/T 32960.3-2025 chp7.2.2 table8
 
 sig_con = Struct(
     "algo" / sig_algos,
-    "r_value" / Prefixed(Int16ub, HexAdapter(con=GreedyBytes)),
-    "s_value" / Prefixed(Int16ub, HexAdapter(con=GreedyBytes)),
+    "r_value" / Prefixed(Int16ub, HexAdapter()),
+    "s_value" / Prefixed(Int16ub, HexAdapter()),
 )
 
 # ==========================================

@@ -5,7 +5,6 @@ from construct import (
     Enum,
     Int8ub,
     Prefixed,
-    GreedyBytes,
 )
 
 from rtm_con.utilities import HexAdapter
@@ -18,7 +17,7 @@ GB/T 32960.3-2025 anxB.3.5.5 tableB.3
 activation_2025 = Struct(
     "timestamp" / rtm_ts,
     "sec_chip_id" / PaddedString(16, "ascii"),
-    "pubkey" / Prefixed(Int16ub, HexAdapter(con=GreedyBytes)),
+    "pubkey" / Prefixed(Int16ub, HexAdapter()),
     "vin" / PaddedString(17, "ascii"),
     "sig" / Signature("timestamp", "sec_chip_id", "pubkey_len", "pubkey", "vin"),
 )

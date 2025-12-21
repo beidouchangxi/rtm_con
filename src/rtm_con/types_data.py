@@ -5,7 +5,6 @@ from construct import (
     Switch,
     Peek,
     RepeatUntil,
-    GreedyBytes,
     GreedyRange,
 )
 
@@ -59,7 +58,7 @@ data_item_2016 = Struct(
         DATA_ITEM_MAPPING_2016,
         # For 2016 protocol, as no other fields in payload
         # For unknown data type, just read all data
-        default=HexAdapter(con=GreedyBytes), # unkown data
+        default=HexAdapter(), # unkown data
     ),
 )
 

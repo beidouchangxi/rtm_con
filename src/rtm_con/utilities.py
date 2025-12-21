@@ -1,4 +1,4 @@
-from construct import Adapter, Bytes
+from construct import Adapter, Bytes, GreedyBytes, Const
 from datetime import datetime
 
 class GoThoughDict(dict):
@@ -18,11 +18,16 @@ class HexAdapter(Adapter):
     '''
     Adapter to convert bytes to hex string and vice versa
     '''
-    def __init__(self, length=None, *, con=None):
-        if con is not None:
-            super().__init__(con)
+    def __init__(self, len_or_const=None):
+        if len_or_const is None:
+            # default value for GreedyBytes
+            super().__init__(GreedyBytes)
+        elif isinstance(len_or_const, bytes):
+            # bytes for const
+            super().__init__(Const(len_or_const))
         else:
-            super().__init__(Bytes(length))
+            # other for length
+            super().__init__(Bytes(len_or_const))
         
     def _decode(self, raw_value, context, path):
         return raw_value.hex()
