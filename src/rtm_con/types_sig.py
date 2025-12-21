@@ -31,9 +31,6 @@ sig_con = Struct(
     "s_value" / Prefixed(Int16ub, HexAdapter()),
 )
 
-# ==========================================
-# 1. Custom Signature Component
-# ==========================================
 class Signature(Construct):
     def __init__(self, *signed_items):
         super().__init__()
@@ -79,6 +76,8 @@ class Signature(Construct):
                     )
                 except cryptography.exceptions.InvalidSignature:
                     raise ValidationError(f"RSA Signature verification failed at path {path}")
+            else:
+                raise TypeError("The algorighm specified in message is not supported")
         return sig
 
     def _build(self, obj, stream, context, path):
@@ -101,5 +100,7 @@ class Signature(Construct):
                 })
                 stream.write(build_res)
                 return build_res
-        # No private key or algorighm is not supported, skip signing part
+            else:
+                raise ValidationError(f'The algorighm of private_key is not supported')
+        # No private key, skip signing part
         return self.base_con._build(obj, stream, context, path)
