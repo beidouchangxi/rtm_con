@@ -122,4 +122,4 @@ class StructWithKey(Struct):
         """A more safer way to pass-in the prikey for signature generation"""
         if prikey==None:
             raise TypeError("prikey is None!")
-        return self.build(obj_data, private=prikey)
+        return self.build(obj_data, private_key=prikey)
