@@ -1,12 +1,24 @@
 import tkinter as tk
-from tkinter import ttk, messagebox, Menu
+from tkinter import ttk, messagebox, Menu, Toplevel
 import binascii
 import ast
 import pprint
 import sys
 import datetime
+import base64
 
-from construct import Container
+# ==========================================
+# Cryptography Dependency Check
+# ==========================================
+try:
+    from cryptography.hazmat.primitives import serialization
+    from cryptography.hazmat.primitives.asymmetric import rsa
+    from cryptography.hazmat.backends import default_backend
+    HAS_CRYPTO = True
+except ImportError:
+    HAS_CRYPTO = False
+
+import construct
 
 from rtm_con.utilities import con_to_pyobj
 
@@ -14,40 +26,227 @@ from rtm_con.utilities import con_to_pyobj
 # GUI Application
 # ==========================================
 
+class SetKeyWindow(Toplevel):
+    def __init__(self, parent, key_data, callback):
+        super().__init__(parent)
+        self.title("Set Keys")
+        self.geometry("600x500")
+        self.key_data = key_data # Reference to parent's key storage
+        self.callback = callback # Callback to save keys
+        
+        self.create_widgets()
+        self.load_current_values()
+
+    def create_widgets(self):
+        main_frame = ttk.Frame(self, padding=10)
+        main_frame.pack(fill=tk.BOTH, expand=True)
+
+        # --- Public Key Section ---
+        lbl_pub = ttk.LabelFrame(main_frame, text="Public Key", padding=10)
+        lbl_pub.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
+
+        # Controls
+        pub_ctrl_frame = ttk.Frame(lbl_pub)
+        pub_ctrl_frame.pack(fill=tk.X)
+        
+        self.pub_fmt = tk.StringVar(value="base64")
+        ttk.Label(pub_ctrl_frame, text="Format:").pack(side=tk.LEFT)
+        ttk.Radiobutton(pub_ctrl_frame, text="Base64", variable=self.pub_fmt, value="base64").pack(side=tk.LEFT)
+        ttk.Radiobutton(pub_ctrl_frame, text="Hex String", variable=self.pub_fmt, value="hex").pack(side=tk.LEFT, padx=(0, 5))
+
+        ttk.Separator(pub_ctrl_frame, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=10, pady=2)
+
+        self.pub_content = tk.StringVar(value="DER")
+        ttk.Label(pub_ctrl_frame, text="Content:").pack(side=tk.LEFT)
+        ttk.Radiobutton(pub_ctrl_frame, text="DER", variable=self.pub_content, value="DER").pack(side=tk.LEFT)
+        ttk.Radiobutton(pub_ctrl_frame, text="BIT", variable=self.pub_content, value="BIT").pack(side=tk.LEFT)
+
+        self.txt_pub = tk.Text(lbl_pub, height=5, font=("Consolas", 9))
+        self.txt_pub.pack(fill=tk.BOTH, expand=True, pady=(5,0))
+
+        # --- Private Key Section ---
+        lbl_pri = ttk.LabelFrame(main_frame, text="Private Key", padding=10)
+        lbl_pri.pack(fill=tk.BOTH, expand=True, pady=(0, 10))
+
+        # Controls
+        pri_ctrl_frame = ttk.Frame(lbl_pri)
+        pri_ctrl_frame.pack(fill=tk.X)
+        
+        self.pri_fmt = tk.StringVar(value="base64")
+        ttk.Label(pri_ctrl_frame, text="Format:").pack(side=tk.LEFT)
+        ttk.Radiobutton(pri_ctrl_frame, text="Base64", variable=self.pri_fmt, value="base64").pack(side=tk.LEFT)
+        ttk.Radiobutton(pri_ctrl_frame, text="Hex String", variable=self.pri_fmt, value="hex").pack(side=tk.LEFT, padx=(0, 5))
+
+        ttk.Separator(pri_ctrl_frame, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=10, pady=2)
+
+        self.pri_content = tk.StringVar(value="DER")
+        ttk.Label(pri_ctrl_frame, text="Content:").pack(side=tk.LEFT)
+        ttk.Radiobutton(pri_ctrl_frame, text="DER", variable=self.pri_content, value="DER").pack(side=tk.LEFT)
+        ttk.Radiobutton(pri_ctrl_frame, text="BIT", variable=self.pri_content, value="BIT").pack(side=tk.LEFT)
+
+        self.txt_pri = tk.Text(lbl_pri, height=5, font=("Consolas", 9))
+        self.txt_pri.pack(fill=tk.BOTH, expand=True, pady=(5,0))
+
+        # --- Buttons ---
+        btn_frame = ttk.Frame(main_frame)
+        btn_frame.pack(fill=tk.X)
+        ttk.Button(btn_frame, text="Cancel", command=self.destroy).pack(side=tk.RIGHT, padx=5)
+        ttk.Button(btn_frame, text="Confirm", command=self.on_confirm).pack(side=tk.RIGHT, padx=5)
+
+    def load_current_values(self):
+        # Load values from memory if they exist
+        if self.key_data.get('pub_raw_text'):
+            self.txt_pub.insert("1.0", self.key_data['pub_raw_text'])
+            self.pub_fmt.set(self.key_data['pub_fmt'])
+            self.pub_content.set(self.key_data['pub_content'])
+        
+        if self.key_data.get('pri_raw_text'):
+            self.txt_pri.insert("1.0", self.key_data['pri_raw_text'])
+            self.pri_fmt.set(self.key_data['pri_fmt'])
+            self.pri_content.set(self.key_data['pri_content'])
+
+    def on_confirm(self):
+        if not HAS_CRYPTO:
+            messagebox.showerror("Error", "Cryptography library not installed.\nCannot validate or save keys.")
+            return
+
+        pub_text = self.txt_pub.get("1.0", tk.END).strip()
+        pri_text = self.txt_pri.get("1.0", tk.END).strip()
+        
+        parsed_pub = None
+        parsed_pri = None
+
+        # Validate Public Key
+        if pub_text:
+            try:
+                parsed_pub, new_fmt = self.parse_key(pub_text, self.pub_fmt.get(), self.pub_content.get(), is_public=True)
+                if new_fmt != self.pub_fmt.get():
+                    self.pub_fmt.set(new_fmt) # Auto-correct format if alternative worked
+            except Exception as e:
+                messagebox.showerror("Public Key Error", str(e))
+                return
+
+        # Validate Private Key
+        if pri_text:
+            try:
+                parsed_pri, new_fmt = self.parse_key(pri_text, self.pri_fmt.get(), self.pri_content.get(), is_public=False)
+                if new_fmt != self.pri_fmt.get():
+                    self.pri_fmt.set(new_fmt)
+            except Exception as e:
+                messagebox.showerror("Private Key Error", str(e))
+                return
+
+        # Save to memory via callback
+        self.callback({
+            'pub_obj': parsed_pub,
+            'pub_raw_text': pub_text,
+            'pub_fmt': self.pub_fmt.get(),
+            'pub_content': self.pub_content.get(),
+            'pri_obj': parsed_pri,
+            'pri_raw_text': pri_text,
+            'pri_fmt': self.pri_fmt.get(),
+            'pri_content': self.pri_content.get()
+        })
+        self.destroy()
+
+    def parse_key(self, text, fmt, content_type, is_public=True):
+        # 1. Decode text to bytes based on format (Hex/Base64)
+        key_bytes = None
+        used_fmt = fmt
+        
+        # Try specified format first, then alternate
+        formats_to_try = [fmt] + ([f for f in ['base64', 'hex'] if f != fmt])
+        
+        for f in formats_to_try:
+            try:
+                if f == 'hex':
+                    # Remove spaces/newlines for hex
+                    clean_text = text.replace(" ", "").replace("\n", "").replace("\r", "")
+                    key_bytes = binascii.unhexlify(clean_text)
+                else: # base64
+                    key_bytes = base64.b64decode(text)
+                used_fmt = f
+                break # Success
+            except Exception:
+                continue
+        
+        if key_bytes is None:
+            raise ValueError(f"Failed to decode key text using {fmt} or alternative formats.")
+
+        # 2. Parse bytes based on Content Type (DER/BIT)
+        key_obj = None
+        if content_type == 'DER':
+            if is_public:
+                key_obj = serialization.load_der_public_key(key_bytes, backend=default_backend())
+            else:
+                key_obj = serialization.load_der_private_key(key_bytes, password=None, backend=default_backend())
+        
+        elif content_type == 'BIT':
+            # BIT format: 259 bytes = 256 bytes modulus + 3 bytes exponent
+            # Special case for "hex" format with BIT: it's ASCII encoded hex of the BIT text
+            if fmt == 'hex':
+                 # Re-interpret: The input text was hex of the ASCII base64 string
+                 # So key_bytes is actually the ASCII bytes of the Base64 string
+                 # We need to decode that ASCII bytes to string, then b64decode that
+                 try:
+                     b64_str = key_bytes.decode('ascii')
+                     real_bytes = base64.b64decode(b64_str)
+                 except:
+                     raise ValueError("BIT Hex format: Input should be Hex of the Base64 string.")
+            else:
+                # Base64 format: key_bytes is already the decoded binary
+                real_bytes = key_bytes
+
+            if len(real_bytes) != 259:
+                raise ValueError(f"BIT format requires 259 bytes, got {len(real_bytes)}")
+            
+            modulus_bytes = real_bytes[:256]
+            exponent_bytes = real_bytes[256:]
+            
+            n = int.from_bytes(modulus_bytes, 'big')
+            e = int.from_bytes(exponent_bytes, 'big')
+            
+            if is_public:
+                key_obj = rsa.RSAPublicNumbers(e, n).public_key(default_backend())
+            else:
+                raise ValueError("BIT format private keys are not supported in this implementation.")
+
+        return key_obj, used_fmt
+
 class MessageAnalyzer(tk.Tk):
     '''Hex and object viewer for a constuct container, mostly for rtm msg'''
-    def __init__(self, msg_map:dict[str, Container], *, tittle:str="Message analyzer"):
+    def __init__(self, msg_map:dict[str, construct.Container], *, tittle:str="Message analyzer"):
         super().__init__()
         self.msg_map = msg_map
         
-        # Track selected protocol
+        # State
         self.selected_proto_key = tk.StringVar(value=next(iter(self.msg_map)))
+        self.current_bytes = b""
+        self.bytes_per_line = 10
+        self.selection_range = (None, None) 
+        self.is_text_maximized = False
+        self.is_tree_maximized = False
+        self.tree_item_map = {} 
+        
+        # Key Storage
+        self.keys = {
+            'pub_obj': None, 'pri_obj': None,
+            'pub_raw_text': '', 'pri_raw_text': '',
+            'pub_fmt': 'base64', 'pri_fmt': 'base64',
+            'pub_content': 'DER', 'pri_content': 'DER'
+        }
 
         self.title(tittle)
         self.geometry("1200x900")
         self.minsize(1000, 750)
-
-        # Data State
-        self.current_bytes = b""
-        self.bytes_per_line = 10
-        self.selection_range = (None, None) 
         
-        # Layout State for Maximize/Restore
-        self.is_text_maximized = False
-        self.is_tree_maximized = False
-        
-        # Map tree item IDs to actual python objects for copy functionality
-        self.tree_item_map = {} 
-
-        # Style configuration
+        self.mono_font = ("Consolas", 10) if sys.platform == "win32" else ("Courier", 10)
         self.style = ttk.Style()
         self.style.configure("TButton", padding=6)
         self.style.configure("TFrame", background="#f0f0f0")
         self.style.configure("Treeview", font=("Arial", 10), rowheight=25)
         self.style.configure("Treeview.Heading", font=("Arial", 10, "bold"))
         self.style.configure("Bold.TLabel", font=("Arial", 10, "bold"))
-        
-        self.mono_font = ("Consolas", 10) if sys.platform == "win32" else ("Courier", 10)
 
         self.create_widgets()
 
@@ -57,7 +256,7 @@ class MessageAnalyzer(tk.Tk):
         self.main_frame = ttk.Frame(self)
         self.main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-        # --- Part 4: Bottom Buttons (Copy & Clear) ---
+        # --- Bottom Buttons (Copy & Clear) ---
         # Pack first to reserve space at bottom
         self.frame_bottom_btns = ttk.Frame(self.main_frame, padding=10)
         self.frame_bottom_btns.pack(side=tk.BOTTOM, fill=tk.X)
@@ -77,37 +276,40 @@ class MessageAnalyzer(tk.Tk):
         ttk.Button(center_btn_frame, text="Clear Data", command=self.clear_data).pack(side=tk.LEFT, padx=5)
         ttk.Button(center_btn_frame, text="Clear All", command=self.clear_all).pack(side=tk.LEFT, padx=5)
 
-        # We'll use a PanedWindow to separate Message Area and Data Area
+        # --- Main Paned Window ---
         self.main_pane = ttk.PanedWindow(self.main_frame, orient=tk.VERTICAL)
         self.main_pane.pack(fill=tk.BOTH, expand=True)
 
-        # --- Part 1: Message (Binary) ---
+        # === 1. Message Section (Pane 1) ===
         self.frame_message = ttk.LabelFrame(self.main_pane, text="Message (Binary)", padding=10)
         self.main_pane.add(self.frame_message, weight=2)
 
-        # Protocol Selection (Top of Message Area)
-        proto_frame = ttk.Frame(self.frame_message)
-        proto_frame.pack(side=tk.TOP, fill=tk.X, pady=(0, 5))
-        ttk.Label(proto_frame, text="Protocol:", font=("Arial", 9, "bold")).pack(side=tk.LEFT)
+        # Top Bar: Protocol + Set Key
+        msg_top_bar = ttk.Frame(self.frame_message)
+        msg_top_bar.pack(side=tk.TOP, fill=tk.X, pady=(0, 5))
         
+        # Left: Protocol
+        proto_frame = ttk.Frame(msg_top_bar)
+        proto_frame.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        ttk.Label(proto_frame, text="Protocol:", font=("Arial", 9, "bold")).pack(side=tk.LEFT)
         for key in self.msg_map:
-            rb = ttk.Radiobutton(proto_frame, text=key, variable=self.selected_proto_key, value=key)
-            rb.pack(side=tk.LEFT, padx=10)
+            ttk.Radiobutton(proto_frame, text=key, variable=self.selected_proto_key, value=key).pack(side=tk.LEFT, padx=10)
+            
+        # Right: Set Key Button
+        ttk.Button(msg_top_bar, text="Set Keys", command=self.open_set_key).pack(side=tk.RIGHT)
 
-        # Message Input (Below Protocol Selection)
+        # Message Input
         input_frame = ttk.Frame(self.frame_message)
         input_frame.pack(side=tk.TOP, fill=tk.X, pady=(0, 10))
         ttk.Label(input_frame, text="Input Hex String:").pack(side=tk.LEFT)
-        
         self.entry_hex = ttk.Entry(input_frame)
         self.entry_hex.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
         self.entry_hex.bind("<Return>", self.on_hex_enter)
         self.entry_hex.bind("<<Paste>>", self.on_hex_paste)
 
-        # Status Bar (Bottom of Message Frame)
+        # Status Bar
         self.msg_status_frame = ttk.Frame(self.frame_message)
         self.msg_status_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=(5, 0))
-        
         self.lbl_total_len = ttk.Label(self.msg_status_frame, text="Total Length: 0 (0x0) bytes", style="Bold.TLabel")
         self.lbl_total_len.pack(side=tk.LEFT, padx=10)
         self.lbl_selection = ttk.Label(self.msg_status_frame, text="Selected: 0 (0x0) bytes")
@@ -152,27 +354,37 @@ class MessageAnalyzer(tk.Tk):
         self.msg_context_menu = Menu(self, tearoff=0)
         self.msg_context_menu.add_command(label="Copy Hex String", command=self.copy_hex_selection)
         self.msg_context_menu.add_command(label="Copy ASCII String", command=self.copy_ascii_selection)
-        for w in self.text_widgets[1:]: 
+        for w in self.text_widgets[1:]:
             w.bind("<Button-3>", self.show_msg_context_menu)
 
 
-        # --- Part 2: Conversion Buttons Frame (Middle) ---
-        self.frame_controls = ttk.Frame(self.main_pane, padding=10)
-        self.main_pane.add(self.frame_controls, weight=0)
+        # === 2. Bottom Pane (Container for Controls + Data) ===
+        # Replaced separate panes with a container to keep controls fixed height relative to data
+        self.bottom_pane_frame = ttk.Frame(self.main_pane)
+        self.main_pane.add(self.bottom_pane_frame, weight=3)
+
+        # 2.1 Controls Section (Inside Bottom Pane, Fixed Height)
+        self.frame_controls = ttk.Frame(self.bottom_pane_frame, padding=5)
+        self.frame_controls.pack(side=tk.TOP, fill=tk.X)
         
-        btn_container = ttk.Frame(self.frame_controls)
-        btn_container.pack(anchor="center")
+        ctrl_container = ttk.Frame(self.frame_controls)
+        ctrl_container.pack(anchor="center")
 
-        btn_msg_to_data = ttk.Button(btn_container, text="Message to Data  ⬇", command=self.msg_to_data)
-        btn_msg_to_data.pack(side=tk.LEFT, padx=30)
+        # Group 1: Check & Sign
+        ttk.Button(ctrl_container, text="Check Message to Data ⬇", command=self.msg_check_to_data).pack(side=tk.LEFT, padx=10)
+        ttk.Button(ctrl_container, text="Sign Data to Message ⬆", command=self.data_sign_to_msg).pack(side=tk.LEFT, padx=10)
+        
+        # Separator
+        ttk.Separator(ctrl_container, orient=tk.VERTICAL).pack(side=tk.LEFT, fill=tk.Y, padx=20)
+        
+        # Group 2: Standard
+        ttk.Button(ctrl_container, text="Message to Data ⬇", command=self.msg_to_data).pack(side=tk.LEFT, padx=10)
+        ttk.Button(ctrl_container, text="Data to Message ⬆", command=self.data_to_msg).pack(side=tk.LEFT, padx=10)
 
-        btn_data_to_msg = ttk.Button(btn_container, text="Data to Message  ⬆", command=self.data_to_msg)
-        btn_data_to_msg.pack(side=tk.LEFT, padx=30)
 
-
-        # --- Part 3: Data (Dict) - Split View ---
-        self.frame_data = ttk.LabelFrame(self.main_pane, text="Data (Python Dictionary)", padding=10)
-        self.main_pane.add(self.frame_data, weight=3)
+        # === 2.2 Data Section (Inside Bottom Pane, Expandable) ===
+        self.frame_data = ttk.LabelFrame(self.bottom_pane_frame, text="Data (Python Dictionary)", padding=10)
+        self.frame_data.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
         self.data_split = ttk.PanedWindow(self.frame_data, orient=tk.HORIZONTAL)
         self.data_split.pack(fill=tk.BOTH, expand=True)
@@ -200,7 +412,7 @@ class MessageAnalyzer(tk.Tk):
         self.txt_data_scroll_y.pack(side=tk.RIGHT, fill=tk.Y)
         self.txt_data_scroll_x.pack(side=tk.BOTTOM, fill=tk.X)
         self.txt_data.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        
+
         self.txt_data.bind("<<Paste>>", self.on_data_paste)
         self.txt_data.bind("<Return>", self.on_data_return)
 
@@ -211,7 +423,7 @@ class MessageAnalyzer(tk.Tk):
         # Header for Tree
         tree_header = ttk.Frame(self.data_tree_container)
         tree_header.pack(fill=tk.X, pady=(0, 5))
-        ttk.Label(tree_header, text="Tree Visualization (Private keys hidden):").pack(side=tk.LEFT, anchor="center")
+        ttk.Label(tree_header, text="Tree Visualization:").pack(side=tk.LEFT, anchor="center")
         self.btn_max_tree = ttk.Button(tree_header, text="⛶", width=3, command=self.toggle_max_tree)
         self.btn_max_tree.pack(side=tk.RIGHT)
 
@@ -251,18 +463,15 @@ class MessageAnalyzer(tk.Tk):
             self.is_text_maximized = False
         else:
             # Maximize Text
-            # 1. Reset Tree max if active (mutually exclusive)
             if self.is_tree_maximized:
                 self.toggle_max_tree() # This restores layout
-            
             # 2. Hide other main components
             self.main_pane.forget(self.frame_message)
-            self.main_pane.forget(self.frame_controls)
-            self.frame_bottom_btns.pack_forget()
-            
+            self.frame_controls.pack_forget() # Hide controls inside bottom pane
+            self.frame_bottom_btns.pack_forget() # Hide bottom buttons
             # 3. Hide Tree Pane (Right side of data)
             self.data_split.forget(self.data_tree_container)
-            
+
             self.btn_max_text.config(text="↙") # Restore icon
             self.is_text_maximized = True
 
@@ -280,7 +489,7 @@ class MessageAnalyzer(tk.Tk):
             
             # 2. Hide other main components
             self.main_pane.forget(self.frame_message)
-            self.main_pane.forget(self.frame_controls)
+            self.frame_controls.pack_forget()
             self.frame_bottom_btns.pack_forget()
             
             # 3. Hide Text Pane (Left side of data)
@@ -292,13 +501,14 @@ class MessageAnalyzer(tk.Tk):
     def restore_layout(self):
         
         if self.is_text_maximized or self.is_tree_maximized:
-            # Re-insert Message at top
-            self.main_pane.insert(0, self.frame_message)
-            # Re-insert Controls at index 1
-            self.main_pane.insert(1, self.frame_controls)
+            # Check if message frame needs restoration
+            if len(self.main_pane.panes()) < 2:
+                 self.main_pane.insert(0, self.frame_message)
             
-            # FIX: Force main pane to unpack so clear buttons can be packed 
-            # to bottom FIRST, preserving layout order.
+            # Restore Controls
+            self.frame_controls.pack(side=tk.TOP, fill=tk.X, before=self.frame_data)
+            
+            # Restore Bottom buttons (Need to unpack main pane to order correctly)
             self.main_pane.pack_forget()
             self.frame_bottom_btns.pack(side=tk.BOTTOM, fill=tk.X)
             self.main_pane.pack(fill=tk.BOTH, expand=True)
@@ -337,6 +547,102 @@ class MessageAnalyzer(tk.Tk):
              for widget in self.text_widgets:
                 widget.yview_scroll(1, "units")
         return "break"
+
+    # ==========================================
+    # Logic: Set Keys
+    # ==========================================
+    def open_set_key(self):
+        SetKeyWindow(self, self.keys, self.on_keys_saved)
+
+    def on_keys_saved(self, new_keys):
+        self.keys = new_keys
+        messagebox.showinfo("Keys Updated", "Keys have been successfully verified and saved to memory.")
+
+    # ==========================================
+    # Logic: Conversion Wrappers
+    # ==========================================
+    def get_current_msg_con(self):
+        selected_proto = self.selected_proto_key.get()
+        return self.msg_map[selected_proto]
+
+    def msg_to_data(self):
+        self._convert_msg_to_data(check_sig=False)
+
+    def msg_check_to_data(self):
+        if not HAS_CRYPTO:
+            messagebox.showerror("Error", "Cryptography library missing. Cannot check signature.")
+            return
+        if not self.keys['pub_obj']:
+            messagebox.showerror("Missing Key", "Public Key is not set. Please configure it in 'Set Key'.")
+            self.open_set_key()
+            return
+        self._convert_msg_to_data(check_sig=True)
+
+    def _convert_msg_to_data(self, check_sig=False):
+        if not self.current_bytes:
+            messagebox.showwarning("Warning", "Message is empty.")
+            return
+
+        try:
+            con = self.get_current_msg_con()
+            
+            if check_sig:
+                internal_obj = con.parse(self.current_bytes, public_key=self.keys['pub_obj'])
+            else:
+                internal_obj = con.parse(self.current_bytes)
+            
+            # Display
+            data_dict_text = con_to_pyobj(internal_obj)
+            pretty = pprint.pformat(data_dict_text, indent=4, sort_dicts=False)
+            self.txt_data.delete("1.0", tk.END)
+            self.txt_data.insert("1.0", pretty)
+            
+            self.populate_tree(internal_obj)
+            
+        except construct.ValidationError as e:
+            messagebox.showerror("Validation Failed", f"Signature Validation Failed:\n{str(e)}")
+        except Exception as e:
+            messagebox.showerror("Conversion Failed", f"An error occurred:\n{str(e)}")
+
+    def data_to_msg(self):
+        self._convert_data_to_msg(sign=False)
+
+    def data_sign_to_msg(self):
+        if not HAS_CRYPTO:
+            messagebox.showerror("Error", "Cryptography library missing. Cannot sign data.")
+            return
+        if not self.keys['pri_obj']:
+            messagebox.showerror("Missing Key", "Private Key is not set. Please configure it in 'Set Key'.")
+            self.open_set_key()
+            return
+        self._convert_data_to_msg(sign=True)
+
+    def _convert_data_to_msg(self, sign=False):
+        data_dict = self.get_data_dict_from_text()
+        if data_dict is None:
+            messagebox.showerror("Error", "Invalid Data in Text Box")
+            return
+
+        try:
+            con = self.get_current_msg_con()
+            
+            if sign:
+                binary_data = con.build(data_dict, private_key=self.keys['pri_obj'])
+            else:
+                binary_data = con.build(data_dict)
+                
+            if not isinstance(binary_data, bytes):
+                raise TypeError(f"Build returned {type(binary_data)}, expected bytes")
+
+            self.current_bytes = binary_data
+            self.refresh_hex_display()
+            self.entry_hex.delete(0, tk.END)
+            self.entry_hex.insert(0, binary_data.hex().lower())
+            
+            self.populate_tree(data_dict) # Refresh tree to match input
+            
+        except Exception as e:
+            messagebox.showerror("Conversion Failed", f"Failed to convert Data to Message:\n{str(e)}")
 
     # ==========================================
     # Logic: Message Input & Rendering
@@ -500,7 +806,7 @@ class MessageAnalyzer(tk.Tk):
         if s is None: return
         data = self.current_bytes[s : e+1]
         self.clipboard_clear()
-        self.clipboard_append(data.hex().upper())
+        self.clipboard_append(data.hex().lower())
 
     def copy_ascii_selection(self):
         s, e = self.selection_range
@@ -583,7 +889,7 @@ class MessageAnalyzer(tk.Tk):
         
         try:
             # Format as python definition
-            txt = pprint.pformat(obj, indent=4)
+            txt = pprint.pformat(obj, indent=4, sort_dicts=False)
             self.clipboard_clear()
             self.clipboard_append(txt)
         except Exception as e:
@@ -613,9 +919,9 @@ class MessageAnalyzer(tk.Tk):
             if not isinstance(data_dict, dict):
                  messagebox.showerror("Invalid Data", "Input must be a valid Python Dictionary definition.")
                  return
-
+            
             # 2. Format (Prettify)
-            pretty_str = pprint.pformat(data_dict, indent=4)
+            pretty_str = pprint.pformat(data_dict, indent=4, sort_dicts=False)
             
             # 3. Update Text Widget
             self.txt_data.delete("1.0", tk.END)
@@ -648,71 +954,13 @@ class MessageAnalyzer(tk.Tk):
         return self.parse_text_to_dict(content)
 
     # ==========================================
-    # Logic: Main Conversion Buttons
-    # ==========================================
-    def msg_to_data(self):
-        if not self.current_bytes:
-            messagebox.showwarning("Warning", "Message is empty.")
-            return
-
-        try:
-            # 1. Parse raw bytes -> internal structure
-            # Req: bytes 转 dict (用于展示部分)：msg.parse(binary_data)
-            # Use selected protocol
-            selected_proto = self.selected_proto_key.get()
-            current_msg = self.msg_map[selected_proto]
-            
-            internal_obj = current_msg.parse(self.current_bytes)
-            
-            # 2. Path A: For Text Box
-            # Req: bytes 转 dict (用于文本框)：con_to_pyobj(msg.parse(binary_data))
-            data_dict_text = con_to_pyobj(internal_obj)
-            pretty = pprint.pformat(data_dict_text, indent=4, sort_dicts=False)
-            self.txt_data.delete("1.0", tk.END)
-            self.txt_data.insert("1.0", pretty)
-            
-            # 3. Path B: For Tree View (Raw object with potential private keys)
-            self.populate_tree(internal_obj)
-            
-        except Exception as e:
-            messagebox.showerror("Conversion Failed", f"Failed to convert Message to Data:\n{str(e)}")
-
-    def data_to_msg(self):
-        # Use the data from the Text Box for conversion
-        data_dict = self.get_data_dict_from_text()
-        
-        if data_dict is None:
-            messagebox.showerror("Error", "Invalid Data in Text Box")
-            return
-
-        try:
-            # Req: dict 转 bytes：msg.build(data_dict)
-            selected_proto = self.selected_proto_key.get()
-            current_msg = self.msg_map[selected_proto]
-            
-            binary_data = current_msg.build(data_dict)
-            if not isinstance(binary_data, bytes):
-                raise TypeError(f"Build returned {type(binary_data)}, expected bytes")
-
-            self.current_bytes = binary_data
-            self.refresh_hex_display()
-            self.entry_hex.delete(0, tk.END)
-            self.entry_hex.insert(0, binary_data.hex().upper())
-            
-            # Optional: Refresh tree 
-            self.populate_tree(data_dict)
-            
-        except Exception as e:
-            messagebox.showerror("Conversion Failed", f"Failed to convert Data to Message:\n{str(e)}")
-
-    # ==========================================
     # Logic: Copy & Clear Buttons
     # ==========================================
     def copy_full_message(self):
         if not self.current_bytes:
             return
         self.clipboard_clear()
-        self.clipboard_append(self.current_bytes.hex().upper())
+        self.clipboard_append(self.current_bytes.hex().lower())
         messagebox.showinfo("Copied", "Full Message Hex string copied to clipboard.")
 
     def copy_full_data(self):
