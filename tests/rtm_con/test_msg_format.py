@@ -1,6 +1,14 @@
 import pytest
 
-from message_and_data_samples import message_and_data_samples
+from message_and_data_samples import message_and_data_samples, prikey_pem_rsa2048, pubkey_pem_rsa2048
+
+try:
+    from cryptography.hazmat.primitives import serialization
+    prikey = serialization.load_pem_private_key(prikey_pem_rsa2048, None)
+    pubkey = serialization.load_pem_public_key(pubkey_pem_rsa2048)
+except:
+    prikey = None
+    pubkey = None
 
 @pytest.mark.parametrize(
     "msg_hex, target, check_build",
@@ -25,10 +33,16 @@ def test_msg_and_msg_checked(msg_hex:str, target:dict, check_build:bool):
         print(msg_hex)
         print(target)
         msg_b = bytes.fromhex(msg_hex)
-        msg = msg_con.parse(msg_b)
+        if pubkey:
+            msg = msg_con.check(msg_b, pubkey)
+        else:
+            msg = msg_con.parse(msg_b)
         compare_container(msg, target)
         if check_build:
-            build_hex = msg_con.build(target).hex()
+            if prikey:
+                build_hex = msg_con.sign(target, prikey).hex()
+            else:
+                build_hex = msg_con.build(target).hex()
             assert build_hex == msg_hex, f"Build data doesn't match orignal bytes\nbuild:\n{build_hex}\norignal:\n{msg_hex}"
 
 
