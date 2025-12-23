@@ -1,6 +1,6 @@
 from .utilities import con_to_pyobj, HexAdapter, GoThoughDict
 from .types_common import rtm_ts, rtm_ver, ack_flags, enc_algos
-from .types_sig import sig_algos, sig_con
+from .types_sig import sig_algos, sig_con, Signature
 from .types_msg import MSG_TYPE_MAPPING_2016, MSG_TYPE_MAPPING_2025
 from .types_data import data_types_2016, data_types_2025, DATA_ITEM_MAPPING_2016, DATA_ITEM_MAPPING_2025
 from .types_dataitem import DataItem, DataItemAdapter
