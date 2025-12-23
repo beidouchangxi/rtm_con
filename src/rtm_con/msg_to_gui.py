@@ -18,9 +18,8 @@ try:
 except ImportError:
     HAS_CRYPTO = False
 
-import construct
-
 from rtm_con.utilities import con_to_pyobj
+from rtm_con.types_exceptions import PayloadSignatureVerificationError
 
 # ==========================================
 # GUI Application
@@ -215,7 +214,7 @@ class SetKeyWindow(Toplevel):
 
 class MessageAnalyzer(tk.Tk):
     '''Hex and object viewer for a constuct container, mostly for rtm msg'''
-    def __init__(self, msg_map:dict[str, construct.Container], *, tittle:str="Message analyzer"):
+    def __init__(self, msg_map, *, tittle:str="Message analyzer"):
         super().__init__()
         self.msg_map = msg_map
         
@@ -599,7 +598,7 @@ class MessageAnalyzer(tk.Tk):
             
             self.populate_tree(internal_obj)
             
-        except construct.ValidationError as e:
+        except PayloadSignatureVerificationError as e:
             messagebox.showerror("Validation Failed", f"Signature Validation Failed:\n{str(e)}")
         except Exception as e:
             messagebox.showerror("Conversion Failed", f"An error occurred:\n{str(e)}")

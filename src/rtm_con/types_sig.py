@@ -1,6 +1,5 @@
 from construct import (
     Construct,
-    ValidationError,
     Struct,
     Int16ub,
     Enum,
@@ -13,6 +12,7 @@ except:
     cryptography = None
 
 from rtm_con.utilities import HexAdapter
+from rtm_con.types_exceptions import PayloadSignatureVerificationError, MissingCryptographyError
 
 sig_algos = Enum(Int8ub, 
     sm2=1,
@@ -67,7 +67,7 @@ class Signature(Construct):
         public_key = self._find_key_in_context(context, "public_key")
         if public_key:
             if cryptography is None:
-                raise ValidationError(f'If you need signature verification, install with extras "sig" or install cryptography manually')
+                raise MissingCryptographyError(f'If you need signature verification, install with extras "sig" or install cryptography manually')
             elif sig.algo=="rsa":
                 # Verify signature only if public_key found in context
                 signature_bytes = bytes.fromhex(sig.r_value)
@@ -80,9 +80,14 @@ class Signature(Construct):
                         cryptography.hazmat.primitives.hashes.SHA256()
                     )
                 except cryptography.exceptions.InvalidSignature:
-                    raise ValidationError(f"RSA Signature verification failed at path {path}")
+                    raise PayloadSignatureVerificationError(f"RSA Signature verification failed at path {path}")
+            elif sig.algo=="sm2":
+                # TBD: SM2, which is not supported by cryptography lib yet
+                raise NotImplementedError("SM2 signature verification is not implemented yet")
+            elif sig.algo=="ecc":
+                raise TypeError("ECC signature is not supported by RTM authority")
             else:
-                raise TypeError("The algorighm specified in message is not supported")
+                raise TypeError("The algorighm specified is not supported by protocol")
         return sig
 
     def _build(self, obj, stream, context, path):
@@ -90,7 +95,7 @@ class Signature(Construct):
         if private_key:
             # Auto generate signature only if private key is provided
             if cryptography is None:
-                raise ValidationError(f'If you need signature generation, install with extras "sig" or install cryptography manually')
+                raise MissingCryptographyError(f'If you need signature generation, install with extras "sig" or install cryptography manually')
             elif isinstance(private_key, cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateKey):
                 data_to_sign = self._find_data_in_context(context)
                 signature = private_key.sign(
@@ -106,7 +111,7 @@ class Signature(Construct):
                 stream.write(build_res)
                 return build_res
             else:
-                raise ValidationError(f'The algorighm of private_key is not supported')
+                raise NotImplementedError(f'The algorithm of private_key is not supported')
         # No private key, skip signing part
         return self.base_con._build(obj, stream, context, path)
 
