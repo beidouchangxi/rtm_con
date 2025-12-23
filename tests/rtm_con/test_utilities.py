@@ -1,5 +1,3 @@
-import pytest
-
 try:
     import rtm_con.utilities as utilities
 except:

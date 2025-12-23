@@ -5,7 +5,6 @@ from construct import (
     Int16ub,
     Enum,
     Prefixed,
-    GreedyBytes,
     Int8ub)
 try:
     # Import cryptography only if signature checking is needed

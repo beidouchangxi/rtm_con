@@ -1,5 +1,3 @@
-from functools import reduce
-
 from construct import (
     Int16ub,
     Int8ub,
