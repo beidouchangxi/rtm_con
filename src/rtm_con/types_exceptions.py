@@ -1,7 +1,9 @@
-class PayloadSignatureVerificationError(Exception):
+from construct import ExplicitError
+
+class PayloadSignatureVerificationError(ExplicitError):
     """If signature verification fails."""
     pass
 
-class MissingCryptographyError(Exception):
+class MissingCryptographyError(ExplicitError):
     """If the dependency of cryptography is missing."""
     pass
