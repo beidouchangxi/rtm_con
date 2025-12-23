@@ -55,8 +55,10 @@ class Signature(Construct):
 
     def _find_data_in_context(self, context):
         raw_pos = context._io.tell()
-        context._io.seek(context[self.data_start_key])
-        data = context._io.read(context[self.data_end_key]-context[self.data_start_key])
+        start = self._find_key_in_context(context, self.data_start_key)
+        end = self._find_key_in_context(context, self.data_end_key)
+        context._io.seek(start)
+        data = context._io.read(end-start)
         context._io.seek(raw_pos)
         return data
 
