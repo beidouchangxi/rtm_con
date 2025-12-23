@@ -1,27 +1,33 @@
 # About rtm_con
-A python implementation for RTM Protocol based on construct, supports both GB/T 32960-2016 and GB/T 32960-2025
+A python implementation for RTM Protocol based on `construct`, supports both `GB/T 32960-2016` and `GB/T 32960-2025`
 
-RTM(Real-Time Monitoring) is a function which defined by China national standard GB/T 32960, it has defined a protocol which almost every China-sold NEV(New Energy Vehicle) must follow.
+RTM(Real-Time Monitoring) is a function which defined by China national standard `GB/T 32960`, it has defined a protocol which almost every China-sold NEV(New Energy Vehicle) must follow.
 
-There are two versons of it, one defined at 2016 and the newer one defined at 2025, both of them are supported by rtm\_con.
+There are two versons of it, one defined at 2016 and the newer one defined at 2025, both of them are supported by `rtm_con`.
 
-As rtm_con is built based on [construct](https://github.com/construct/construct), a powerful declarative and symmetrical parser and builder for binary data, it can be used for both parsing and building.
+As `rtm_con` is built based on [construct](https://github.com/construct/construct), a powerful declarative and symmetrical parser and builder for binary data, it can be used for both parsing and building.
 
 And since it's made by a declarative way, you can also easily customerize your protocol based on it, like define an oem-defined data, or modify a little bit the thing you think not enough for your solution.
 ## Inistallation
-After clone the repo to your local, cd the root folder of the project, and run command
+After clone the repo to your local, cd the root folder of the project
+If you need only parsing and building feature, run command
 ```
 pip install .
 ```
+If you need signature and excel related features, run command
+```
+pip install .[full]
+```
+See `pyproject.toml` for other options
 ## Main Features
-After rtm_con is intalled, check and run the demo.py in root folder to see features below:
+After `rtm_con` is intalled, check and run the `demo.py` in root folder to see features below:
 - Auto identify and handle 2016 and 2025 protocol
 - Convert bytes to objected data, or do vice versa
-- Convert nested data object to a flat dict, refer to the `flat_msg` part of demo.py
-- Convert logs to excel table, refer to the `MsgExcel` part of demo.py, or try command `rtmlog` after you have rtm_con installed
-- A GUI for check/modify data content of a single RTM message, and generate/verify signature which introduced in 2025 protocol, try command `rtmgui` after you have rtm_con installed
+- Convert nested data object to a flat dict, refer to the `flat_msg` part of `demo.py`
+- Convert logs to excel table, refer to the `MsgExcel` part of `demo.py`, or try command `rtmlog` after you have `rtm_con` installed
+- A GUI for check/modify data content of a single RTM message, and generate/verify signature which introduced in 2025 protocol, try command `rtmgui` after you have `rtm_con` installed
 ## Example
-Refer to demo.py for all examples, and read [construct@readthedocs.io](https://construct.readthedocs.io/en/latest/) for more about construct
+Refer to `demo.py` for all examples, and read [construct@readthedocs.io](https://construct.readthedocs.io/en/latest/) for more about `construct`
 ```pycon
 >>> import pprint
 >>> from rtm_con import msg, con_to_pyobj

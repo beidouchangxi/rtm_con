@@ -10,8 +10,7 @@ readme = "README.md"
 license = { text = "GPLv2" }
 authors = [{ name = "BeidouChangxi", email = "Beidoustar@Gmail.com" }]
 dependencies = [
-    "construct",
-    "openpyxl"
+    "construct"
 ]
 
 [project.optional-dependencies]
@@ -20,9 +19,15 @@ test = [
     "pytest-cov"
 ]
 
+excel = [
+    "openpyxl"
+]
+
 sig = [
     "cryptography"
 ]
+
+full = ["rtm_con[excel,sig]"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
