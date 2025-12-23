@@ -1,4 +1,5 @@
 from datetime import datetime
+from unicodedata import name
 
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
@@ -93,3 +94,35 @@ class MsgExcel:
         if isinstance(value, (str, int, float, bool, datetime, type(None))):
             return value
         return str(value)
+
+def main():
+    """A simple tool for convert text log to excel file, which log contains a RTM message in each line"""
+    import os, re
+    from rtm_con.msg_format import msg
+    MSG_PAT = re.compile(r"((?:(?:2323|2424)(?:[0-9a-f]{2})+)|(?:(?:23 23 |24 24 )(?:[0-9a-f]{2} )+))", re.IGNORECASE)
+    user_input = input('Input the path of pure text log file contains RTM messages below, or drag and drop it here:\n')
+    if os.path.exists(user_input):
+        log_file_path = user_input
+        output_excel_file = os.path.splitext(log_file_path)[0] + ".xlsx"
+        print(f'Preparing the excel file "{output_excel_file}"...')
+        # For LogTime:
+        #   Normally you will have another timestamp from the recorder besides the one from message
+        #   But we fill it unkown here for the logtime
+        excel_writer = MsgExcel(rawmsg_key="Msg", logtime_key="LogTime")
+        with open(log_file_path, 'rt', encoding='utf-8') as f:
+            for line in f:
+                match = MSG_PAT.search(line)
+                if match:
+                    msg_hex = match.group(1).replace(" ", "")
+                    msg_obj = msg.parse(bytes.fromhex(msg_hex))
+                    msg_dict = flat_msg(msg_obj)
+                    line_dict = {"Msg":msg_hex, "LogTime":"unkown"}
+                    line_dict.update(msg_dict)
+                    excel_writer.write_line(line_dict, pathdict=msg_dict.pathdict)
+        print(f"Saving the excel file...")
+        excel_writer.save(output_excel_file)
+        print(f"Excel file has been written")
+    else:
+        print("The path is not valid! Please check and try again with absolute path.")
+if __name__ == "__main__":
+    main()

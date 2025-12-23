@@ -29,6 +29,7 @@ where = ["src"]
 
 [project.scripts]
 rtmgui = "rtm_con.msg_to_gui:main"
+rtmlog = "rtm_con.msg_to_excel:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

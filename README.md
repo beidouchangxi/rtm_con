@@ -18,7 +18,7 @@ After rtm_con is intalled, check and run the demo.py in root folder to see featu
 - Auto identify and handle 2016 and 2025 protocol
 - Convert bytes to objected data, or do vice versa
 - Convert nested data object to a flat dict, refer to the `flat_msg` part of demo.py
-- Convert logs to excel table, refer to the `MsgExcel` part of demo.py
+- Convert logs to excel table, refer to the `MsgExcel` part of demo.py, or try command `rtmlog` after you have rtm_con installed
 - A GUI for check/modify data content of a single RTM message, and generate/verify signature which introduced in 2025 protocol, try command `rtmgui` after you have rtm_con installed
 ## Example
 Refer to demo.py for all examples, and read [construct@readthedocs.io](https://construct.readthedocs.io/en/latest/) for more about construct
