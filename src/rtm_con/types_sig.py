@@ -32,10 +32,15 @@ sig_con = Struct(
 )
 
 class Signature(Construct):
-    def __init__(self, *signed_items):
+    """"
+    Signature construct for verifying or generating signatures
+    A pair of fields "data_start_key" and "data_end_key" with peek type should be provided in the context
+    to indicate which part of the data is to be signed or verified.
+    """
+    def __init__(self, data_start_key, data_end_key):
         super().__init__()
-        self.signed_items = signed_items
-        self.sig_len = 256 # 2048 bits
+        self.data_start_key = data_start_key
+        self.data_end_key = data_end_key
         self.base_con = sig_con
 
     @staticmethod
@@ -50,11 +55,10 @@ class Signature(Construct):
         return None
 
     def _find_data_in_context(self, context):
-        data = b""
-        for name in self.signed_items:
-            objdata = context[name]
-            con = context._subcons[name]
-            data += con.build(objdata)
+        raw_pos = context._io.tell()
+        context._io.seek(context[self.data_start_key])
+        data = context._io.read(context[self.data_end_key]-context[self.data_start_key])
+        context._io.seek(raw_pos)
         return data
 
     def _parse(self, stream, context, path):

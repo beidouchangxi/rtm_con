@@ -1,4 +1,4 @@
-from construct import Struct
+from construct import Struct, Tell
 
 from rtm_con.utilities import HexAdapter
 from rtm_con.types_common import rtm_ts
@@ -17,8 +17,10 @@ data_2016 = Struct(
 GB/T 32960.3-2025 chp7.2.1 table7
 """
 data_2025 = Struct(
+    "_signing_start" / Tell,
     "timestamp" / rtm_ts,
     "data_list" / data_items_2025,
+    "_signing_end" / Tell,
     "sig_starter" / HexAdapter(b'\xff'),
-    "sig" / Signature("timestamp", "data_list"),
+    "sig" / Signature("_signing_start", "_signing_end"),
 )
