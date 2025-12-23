@@ -3,15 +3,13 @@ from functools import reduce
 from construct import (
     Int16ub,
     Int8ub,
-    Struct,
     PaddedString,
     Prefixed,
-    Checksum,
     Tell,
     Switch,
-    this,
 )
 
+from rtm_con.types_checksum import RtmChecksum
 from rtm_con.types_common import enc_algos, rtm_ver, ack_flags
 from rtm_con.types_msg import payload_mapping, msg_types
 from rtm_con.types_sig import StructWithKey
@@ -31,12 +29,6 @@ msg = StructWithKey( # Only parse the message without verifying the checksum
     "checksum" / Int8ub,
 )
 
-def check_body(ths): # Find the data to be checksummed
-    ths._io.seek(ths._checking_start)
-    body = ths._io.read(ths._checking_end-ths._checking_start)
-    ths._io.seek(ths._checking_end)
-    return reduce(lambda x,y: x^y, body)
-
 msg_checked = StructWithKey( # Calculate and verify automatically the checksum
     "starter" / rtm_ver, 
     "_checking_start" / Tell,
@@ -46,5 +38,5 @@ msg_checked = StructWithKey( # Calculate and verify automatically the checksum
     "enc" / enc_algos,
     "payload" / Prefixed(Int16ub, Switch(payload_mapping, GoThoughDict())),
     "_checking_end" / Tell,
-    "checksum" / Checksum(Int8ub, check_body, this),
+    "checksum" / RtmChecksum("_checking_start", "_checking_end"),
 )
