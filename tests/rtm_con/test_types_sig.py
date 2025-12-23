@@ -9,10 +9,11 @@ except:
     pubkey = None
 
 def test_Signature():
-    from rtm_con.types_sig import Signature, StructWithKey
+    from rtm_con.types_sig import Signature
+    from rtm_con.types_struct_ext import StructExt
     from rtm_con.types_exceptions import PayloadSignatureVerificationError
     from construct import Tell, Bytes
-    test_con = StructWithKey(
+    test_con = StructExt(
         "_signing_start" / Tell,
         "data" / Bytes(4),
         "_signing_end" / Tell,
