@@ -9,12 +9,22 @@ As `rtm_con` is built based on [construct](https://github.com/construct/construc
 
 And since it's made by a declarative way, you can also easily customerize your protocol based on it, like define an oem-defined data, or modify a little bit the thing you think not enough for your solution.
 ## Inistallation
+### By PyPI
+- If you need only parsing and building feature, run command
+```
+pip install rtm_con
+```
+- If you need signature and excel related features, run command
+```
+pip install rtm_con[full]
+```
+### By Git repo
 After clone the repo to your local, cd the root folder of the project
-If you need only parsing and building feature, run command
+- If you need only parsing and building feature, run command
 ```
 pip install .
 ```
-If you need signature and excel related features, run command
+- If you need signature and excel related features, run command
 ```
 pip install .[full]
 ```
@@ -26,7 +36,9 @@ After `rtm_con` is intalled, check and run the `demo.py` in root folder to see f
 - Convert nested data object to a flat dict, refer to the `flat_msg` part of `demo.py`
 - Convert logs to excel table, refer to the `MsgExcel` part of `demo.py`, or try command `rtmlog` after you have `rtm_con` installed
 - A GUI for check/modify data content of a single RTM message, and generate/verify signature which introduced in 2025 protocol, try command `rtmgui` after you have `rtm_con` installed
-## Example
+<img width="2408" height="1868" alt="image" src="https://github.com/user-attachments/assets/627a69a7-5379-4d06-97f3-e343b0d0ced4" />
+
+## Build/Parse Example
 Refer to `demo.py` for all examples, and read [construct@readthedocs.io](https://construct.readthedocs.io/en/latest/) for more about `construct`
 ```pycon
 >>> import pprint
