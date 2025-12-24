@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "rtm_con"
-version = "0.1.0"
+version = "1.0.0"
 description = "RTM protocol implementation by construct, which protocol defined by GB/T 32960-2016/2025"
 readme = "README.md"
 license = { text = "GPLv2" }
