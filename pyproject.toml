@@ -5,13 +5,22 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "rtm_con"
 version = "1.0.0"
-description = "RTM protocol implementation by construct, which protocol defined by GB/T 32960-2016/2025"
+description = "RTM protocol implementation by construct, which protocol defined by GB/T 32960-2016 and GB/T 32960-2025"
 readme = "README.md"
 license = { text = "GPLv2" }
 authors = [{ name = "BeidouChangxi", email = "Beidoustar@Gmail.com" }]
 dependencies = [
     "construct"
 ]
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/beidouchangxi/rtm_con"
 
 [project.optional-dependencies]
 test = [
