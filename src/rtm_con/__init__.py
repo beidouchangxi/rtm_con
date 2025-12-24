@@ -26,5 +26,8 @@ from .data_oem_define import OemDefineData
 from .payload_data import data_2016, data_2025
 from .msg_format import msg, msg_checked
 from .msg_flatten import flat_msg
-from .msg_to_excel import MsgExcel
+try:
+    from .msg_to_excel import MsgExcel
+except (ImportError, NameError):
+    MsgExcel = None
 from .msg_to_gui import MessageAnalyzer

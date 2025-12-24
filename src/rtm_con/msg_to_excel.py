@@ -13,6 +13,9 @@ class MsgExcel:
     int_format: str = '0'
     float_format: str = '0.000'
     def __init__(self, *, rawmsg_key: str, logtime_key: str):
+        if openpyxl is None:
+            raise ImportError("openpyxl is required for MsgExcel but it's not installed,\
+                               try to use extra 'excel' or 'pip install openpyxl' to install it.")
         self.rawmsg_key = rawmsg_key
         self.logtime_key = logtime_key
         self.prefixed_headers: list = [logtime_key, 'timestamp', rawmsg_key]
