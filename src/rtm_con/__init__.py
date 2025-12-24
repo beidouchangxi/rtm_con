@@ -28,6 +28,6 @@ from .msg_format import msg, msg_checked
 from .msg_flatten import flat_msg
 try:
     from .msg_to_excel import MsgExcel
-except (ImportError, NameError):
+except ImportError:
     MsgExcel = None
 from .msg_to_gui import MessageAnalyzer
