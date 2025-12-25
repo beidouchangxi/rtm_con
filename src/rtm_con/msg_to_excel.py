@@ -1,9 +1,13 @@
 from datetime import datetime
 from unicodedata import name
 
-from openpyxl import Workbook
-from openpyxl.utils import get_column_letter
-from openpyxl.worksheet.dimensions import ColumnDimension
+try:
+    import openpyxl
+    from openpyxl import Workbook
+    from openpyxl.utils import get_column_letter
+    from openpyxl.worksheet.dimensions import ColumnDimension
+except ImportError:
+    openpyxl = None
 
 from rtm_con.msg_flatten import flat_msg
 from rtm_con.types_dataitem import DataItem
